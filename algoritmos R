@@ -25,6 +25,8 @@ Analitica en R:
 
 ################# 2 ##############
 # Podemos escribir la misma sintaxis en forma alternativa:
+# geom_point entrega una estetica a la forma en que
+# se visualizaran los datos
 # t <- ggplot(dataset, aes(x=cty, y=hwy)) + geom_point(aes(size=cyl))
 ##################################
 
@@ -91,13 +93,13 @@ library(sp)
 library(methods)
 library(TeachingDemos)
 require(sp)
-ddf =dataset
+ddf = dataset
 sPDF <- joinCountryData2Map(ddf, joinCode = "NAME",
 nameJoinColumn = "country", verbose = TRUE)
 plot(getMap())
 ##################################
 
-# Ahora tengo que fusionar los datos para obtener la información
+# Ahora se deben fusionar los datos para obtener la información
 de ubicación de "sPDF" en "ddf". Para hacer eso, voy a usar la
 función "merge". Como puede ver en el siguiente código, el
 primer argumento es nuestro primer conjunto de datos "ddf" y el
@@ -126,22 +128,140 @@ gráfico de barras, usamos (col = rainbow (3)). El eje "Y" debe variar
 los valores del conjunto de datos "df" para el conjunto de datos
 df [, 2: 4]. el eje "x" obtiene la latitud y longitud. El tamaño
 del gráfico de barras se puede cambiar mediante la función
-"tamaño = c (,)".
-
-
+"size = c(,)".
 
 ################# 9 ##############
 require(TeachingDemos)
 
 for (i in 1:nrow(df))
-    # subplot(barplot(height=as.numeric(as.character(unlist(df[i, 2:4],
-    # use.names=F))),axes=F,  col=rainbow(3), ylim=range(df[,2:4])),
-    # x=df[i, 'LON'], y=df[i, 'LAT'], size=c(.6, .6))
+    subplot(barplot(height=as.numeric(as.character(unlist(df[i, 2:4],
+    use.names=F))), axes=F,  col=rainbow(3), ylim=range(df[,2:4])),
+    x=df[i, 'LON'], y=df[i, 'LAT'], size=c(.6, .6))
 ##################################
 
-subplot(pie(as.numeric(as.character(unlist(df[i, 2:4], use.names=F))),axes=F,  col=rainbow(6), ylim=range(df[,2:4])),
- x=df[i, 'LON'], y=df[i, 'LAT'], size=c(.6, .6))
+# agreguemos una leyenda que indique los colores de las barras:
 
-
-
+################# 10 ##############
 legend("topright", legend=names(df[, 2:4]), fill=rainbow(3))
+##################################
+
+# podemos cambiar el grafico de barras por un grafico de tortas,
+cambiando el tipo de subplot:
+
+################# 11 ##############
+subplot(pie(as.numeric(as.character(unlist(df[i, 2:4], use.names=F))),
+axes=F,  col=rainbow(6), ylim=range(df[,2:4])),
+x=df[i, 'LON'], y=df[i, 'LAT'], size=c(.6, .6))
+##################################
+
+# podemos hacer que el grafico de barras sea horizontal:
+
+################# 12 ##############
+for (i in 1:nrow(df))
+    subplot(barplot(height=as.numeric(as.character(unlist(df[i, 2:4],
+    use.names=F))), horiz= TRUE, axes=F,  col=rainbow(3), ylim=range(df[,2:4])),
+    x=df[i, 'LON'], y=df[i, 'LAT'], size=c(.6, .6))
+###################################
+
+
+*******************
+## Cuarta parte: Gráfico de columnas de ancho variable ##
+*******************
+La comparación, una de las principales razones de la visualización
+de datos, consiste en comparar datos para ver los cambios y descubrir
+la diferencia entre los valores. Principalmente se comparan datos a
+lo largo del tiempo o con otros elementos.
+
+Para fines de comparación, la mayoría de los gráficos pueden estar
+disponibles en Power BI Visualization, solo dos de ellos no lo están:
+Gráfico de columnas de ancho variable y Tablas con gráficos incrustados.
+
+# Agreguemos a powerBI una tabla llamada Info
+Y sera poblacion y X Gas parciales.
+
+################# 13 ##############
+df<-data.frame(Region=dataset$Region,
+Population= dataset$Pop, width=dataset$Gas)
+###################################
+
+# vamos a identificar el tamaño del ancho de cada rectángulo en el
+# gráfico:
+
+"Cumsum" una función de suma acumulativa que calcula el ancho de
+cada región en el gráfico desde 0 hasta su ancho. Este cálculo nos
+da el punto final (ancho) de cada barra en nuestro gráfico de barras
+de ancho de columna
+
+# obtengamos los X Gas parciales que nacen de cero:
+
+# a continuación, tenemos que calcular el punto de inicio de cada
+# gráfico de barras:
+
+y obtengamos el punto medio del ancho para establecer la etiqueta
+(para gas) de cada pais:
+
+################# 14 ##############
+df$w <- cumsum(df$width) #cumulative sums.
+df$wm <- df$w – df$width
+df$GreenGas<- with(df, wm + (w – wm)/2)
+###################################
+
+# El primer paso es identificar el punto de inicio y el punto final
+# de cada rectángulo.
+
+llamamos a otra función como se muestra a continuación, esta función
+dibuja un rectángulo para nosotros. esto obtiene el punto de inicio
+de cada rectángulo (barra) como "wm" y el punto final de ellos
+"w" (ya los calculamos anteriormente y el tercer argumento es el
+rango del número de "Población". El último argumento permite colorear
+cada rectángulo en función de su región relacionada.
+
+################# 15 ##############
+library(ggplot2)
+p <- ggplot(df, aes(ymin = 0))
+p1 <- p + geom_rect(aes(xmin = wm, xmax = w,
+ymax = Population, fill = Region))
+p1
+###################################
+
+# anadamos una capa para presentar las etiquetas
+# con la funcion geom_text :
+
+################# 16 ##############
+p2 <- p1 + geom_text(aes(x = GreenGas, y = Population, label = Region),
+size=7, angle = 45)
+p2
+###################################
+
+Podemos cambiar las etiquetas de los ejes x e y y agregar un
+titulo al grafico anadiendo otra capa con la funcion labs:
+
+################# 17 ##############
+p3 <- p2 + labs(title = "Region Green Gas per Population",
+x = "Green Gas", y = "Population")
+p3
+###################################
+
+# Podemos definir temas para las etiquetas de los ejes
+# y el titulo del grafico con la funcion element_text.
+
+################# 18 ##############
+blue.bold.italic.10.text <- element_text(face = "bold.italic",
+color = "dark green", size = 16)
+###################################
+
+Con la funcion theme podemos situar este tema en el
+elemento que queremos:
+################## 19 ##############
+p4 <- p3 + theme(axis.title = blue.bold.italic.10.text,
+title = blue.bold.italic.10.text)
+p4
+###################################
+
+Podemos agregar un filtro y hacer comparaciones con datos agrupados:
+
+
+
+*******************
+## Quinta parte: Tablas con gráficos incrustados ##
+*******************
