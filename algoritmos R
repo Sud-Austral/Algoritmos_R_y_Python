@@ -1,0 +1,69 @@
+How to create geographic maps in Power BI using R
+https://www.sqlshack.com/how-to-create-geographic-maps-in-power-bi-using-r/
+
+Online Book: Analytics with Power BI and R
+https://radacad.com/online-book-analytics-with-power-bi-and-r
+
+Analitica en R:
+
+## Primera parte ##
+
+# Tenemos un csv llamado mpg
+# lo cargamos en PowerBI
+
+# library(ggplot2)
+# t <- ggplot(dataset, aes(x=cty, y=hwy, size=cyl))+geom_point(pch=2)
+# t <- ggplot(dataset, aes(x=cty, y=hwy))+geom_point(aes(size=cyl))
+# http://www.sthda.com/english/wiki/ggplot2-point-shapes
+# t<-ggplot(dataset, aes(x=cty, y=hwy,size=cyl)) + geom_point(pch=23)+scale_size_continuous(range=c(1,5))
+# t<-ggplot(dataset, aes(x=cty, y=hwy,size=cyl)) + geom_point(pch=21)+scale_size_continuous(range=c(1,10))
+# t<-ggplot(dataset, aes(x=cty, y=hwy,size=cyl,fill="Red")) + geom_point(pch=24)+scale_size_continuous(range=c(1,5))
+# t
+
+## Segunda parte ##
+
+# library(ggplot2)
+# t<-ggplot(dataset, aes(x=cty, y=hwy,colour = factor(cyl))) + geom_point(size=4)
+# ahora quiero agregar otra capa a este gráfico. agregando el año y la opción de manejo del automóvil a la tabla. Para hacerlo, primero elija el año y el drv del campo de datos en Power BI. Como he mencionado antes, ahora la variable del conjunto de datos contendrá datos sobre la velocidad en ciudad, la velocidad en carretera, la cantidad de cilindros, los años de automóviles y el tipo de unidad.
+
+# Voy a usar otra función en el nombre de los paquetes de ggplot "facet_grid" que me ayuda a mostrar las diferentes facetas en mi gráfico de dispersión. en esta función, año y drv (controlador) se mostrarán uno contra el otro.
+
+# t<-t + facet_grid(year ~ drv)
+# t
+
+# library(ggplot2)
+# t<-ggplot(dataset, aes(x=cty, y=hwy,color=cyl)) + geom_point(size=5)
+# t<-t + facet_wrap(year~ drv)
+# t
+
+
+## Tercera parte ##
+
+library(rworldmap)
+library(sp)
+library(methods)
+library(TeachingDemos)
+require(sp)
+
+ddf =dataset
+sPDF <- joinCountryData2Map(ddf    , joinCode = "NAME"    , nameJoinColumn = "country"    , verbose = TRUE)
+
+
+plot(getMap())
+df <- merge(x=ddf, y=sPDF@data[sPDF@data$ADMIN, c("ADMIN", "LON", "LAT")], by.x="country", by.y="ADMIN", all.x=TRUE)
+
+
+require(TeachingDemos)
+
+for (i in 1:nrow(df))
+    # subplot(barplot(height=as.numeric(as.character(unlist(df[i, 2:4],
+    # use.names=F))),axes=F,  col=rainbow(3), ylim=range(df[,2:4])),
+    # x=df[i, 'LON'], y=df[i, 'LAT'], size=c(.6, .6))
+
+
+subplot(pie(as.numeric(as.character(unlist(df[i, 2:4], use.names=F))),axes=F,  col=rainbow(6), ylim=range(df[,2:4])),
+ x=df[i, 'LON'], y=df[i, 'LAT'], size=c(.6, .6))
+
+
+
+legend("topright", legend=names(df[, 2:4]), fill=rainbow(3))
