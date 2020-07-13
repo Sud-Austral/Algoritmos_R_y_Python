@@ -6,60 +6,138 @@ https://radacad.com/online-book-analytics-with-power-bi-and-r
 
 Analitica en R:
 
-## Primera parte ##
+*******************
+## Primera parte: graficos de dispersion I (despliegue de tres variables) ##
+*******************
 
-# Tenemos un csv llamado mpg
-# lo cargamos en PowerBI
+# Tenemos un csv llamado mpg lo cargamos en PowerBI,
+# seleccionamos cty, cyl y hwy, (velocidad en ciudad,
+# en carretera y cilindrada) seleccionando para estas
+# variables en el item valores: no resumir.
 
+################# 1 ##############
 # library(ggplot2)
-# t <- ggplot(dataset, aes(x=cty, y=hwy, size=cyl))+geom_point(pch=2)
-# t <- ggplot(dataset, aes(x=cty, y=hwy))+geom_point(aes(size=cyl))
+# t <- ggplot(dataset, aes(x=cty, y=hwy, size=cyl))+geom_point(pch=20)
+# t
+##################################
 # http://www.sthda.com/english/wiki/ggplot2-point-shapes
-# t<-ggplot(dataset, aes(x=cty, y=hwy,size=cyl)) + geom_point(pch=23)+scale_size_continuous(range=c(1,5))
-# t<-ggplot(dataset, aes(x=cty, y=hwy,size=cyl)) + geom_point(pch=21)+scale_size_continuous(range=c(1,10))
-# t<-ggplot(dataset, aes(x=cty, y=hwy,size=cyl,fill="Red")) + geom_point(pch=24)+scale_size_continuous(range=c(1,5))
+
+
+################# 2 ##############
+# Podemos escribir la misma sintaxis en forma alternativa:
+# t <- ggplot(dataset, aes(x=cty, y=hwy)) + geom_point(aes(size=cyl))
+##################################
+
+
+################# 3 ##############
+# Podemos agregar una nueva capa que establezca el rango de la
+# diferencia visual entre el mayor y el menor valor mostrado
+# y podemos agregar un color que cubra el area de los circulos:
+# t <- ggplot(dataset, aes(x=cty, y=hwy, size=cyl)) + geom_point(pch=23)+scale_size_continuous(range=c(1,5))
+# t <- ggplot(dataset, aes(x=cty, y=hwy, size=cyl , fill="Red")) + geom_point(pch=24)+scale_size_continuous(range=c(1,5))
 # t
+##################################
 
-## Segunda parte ##
+*******************
+## Segunda parte: graficos de dispersion II (despliegue de cinco variables)##
+*******************
 
-# library(ggplot2)
-# t<-ggplot(dataset, aes(x=cty, y=hwy,colour = factor(cyl))) + geom_point(size=4)
-# ahora quiero agregar otra capa a este gráfico. agregando el año y la opción de manejo del automóvil a la tabla. Para hacerlo, primero elija el año y el drv del campo de datos en Power BI. Como he mencionado antes, ahora la variable del conjunto de datos contendrá datos sobre la velocidad en ciudad, la velocidad en carretera, la cantidad de cilindros, los años de automóviles y el tipo de unidad.
+################# 4 ##############
+# t <- ggplot(dataset, aes(x=cty, y=hwy, colour = factor(cyl))) + geom_point(size=4)
+##################################
 
-# Voy a usar otra función en el nombre de los paquetes de ggplot "facet_grid" que me ayuda a mostrar las diferentes facetas en mi gráfico de dispersión. en esta función, año y drv (controlador) se mostrarán uno contra el otro.
+# ahora agragremos otra capa a este gráfico, considerando el año
+y la opción de manejo del automóvil a la tabla (year y drv),
+utilizando la funcion de ggplot "facet_grid".
 
-# t<-t + facet_grid(year ~ drv)
-# t
+################# 5 ##############
+library(ggplot2)
+t<-ggplot(dataset, aes(x=cty, y=hwy, colour = factor(cyl))) + geom_point(size=4)
+t<-t + facet_grid(year ~ drv)
+t
+##################################
 
-# library(ggplot2)
-# t<-ggplot(dataset, aes(x=cty, y=hwy,color=cyl)) + geom_point(size=5)
-# t<-t + facet_wrap(year~ drv)
-# t
+# Podemos agregar un filtro por marcas de autos(manufacturer)
 
+# Podemos mostrar el tipo de cambio en todas las regiones
+# con facet_wrap y desplegar no colores sino cambios de tonalidades
+# de un mismo color reemplazando colour = factor(cyl) con color=cyl
 
-## Tercera parte ##
+################# 6 ##############
+library(ggplot2)
+t <- ggplot(dataset, aes(x=cty, y=hwy, color=cyl)) + geom_point(size=5)
+t <- t + facet_wrap(year ~ drv)
+t
+##################################
 
+*******************
+## Tercera parte: despliegue de datos geograficos ##
+*******************
+
+# Carguemos nuestra tabla ddf.
+
+# Debemos encontrar la latitud y longitud de
+# cada país utilizando la función "joincountrydata2map".
+# esta función obtiene el conjunto de datos "ddf" en nuestro
+# caso como primer argumento, luego basado en el nombre del
+# país "joincode =" NAME "y en el conjunto de datos ddf"
+# columna de país "(tercer argumento) encontrará la especificación
+# de ubicación del país (lat y lon) para mostrar en el mapa.
+# Almacenamos el resultado de la función en la variable "sPDF"
+
+################# 7 ##############
 library(rworldmap)
 library(sp)
 library(methods)
 library(TeachingDemos)
 require(sp)
-
 ddf =dataset
-sPDF <- joinCountryData2Map(ddf    , joinCode = "NAME"    , nameJoinColumn = "country"    , verbose = TRUE)
-
-
+sPDF <- joinCountryData2Map(ddf, joinCode = "NAME",
+nameJoinColumn = "country", verbose = TRUE)
 plot(getMap())
+##################################
+
+# Ahora tengo que fusionar los datos para obtener la información
+de ubicación de "sPDF" en "ddf". Para hacer eso, voy a usar la
+función "merge". Como puede ver en el siguiente código, el
+primer argumento es nuestro primer conjunto de datos "ddf" y el
+segundo es la información sobre Lat y Lon de ubicación (sPDF).
+las columnas tercera y cuarta muestran las principales variables
+para unir estos dos conjuntos de datos, ya que "ddf" (x) es "país"
+y en la segunda, "sPDF" es "Admin". el resultado se almacenará en
+el conjunto de datos "df"
+
+################# 8 ##############
 df <- merge(x=ddf, y=sPDF@data[sPDF@data$ADMIN, c("ADMIN", "LON", "LAT")], by.x="country", by.y="ADMIN", all.x=TRUE)
+##################################
+
+Voy a dibujar un gráfico de barras simple que muestre el valor1,
+el Valor2 y el Valor 3 para cada país. Por lo tanto, necesito una
+estructura de bucle para dibujar un gráfico de barras para cada país,
+como se muestra a continuación. Escribí “for (I en 1: nrwo (df)) que
+significa dibujar un gráfico de barras para todos los países que
+tenemos en“ df ”, luego llamé a una subtrama como función principal
+que dentro definí la gráfica de barras ().
+barplot () obtiene valores para la altura de cada gráfico de barras
+como un número (como número). También obtengo los datos relacionados
+con el conjunto de datos "df" del número de fila "i", para las
+columnas del 2 al 4 (valor 1 al valor 3). Para marcar el color del
+gráfico de barras, usamos (col = rainbow (3)). El eje "Y" debe variar
+los valores del conjunto de datos "df" para el conjunto de datos
+df [, 2: 4]. el eje "x" obtiene la latitud y longitud. El tamaño
+del gráfico de barras se puede cambiar mediante la función
+"tamaño = c (,)".
 
 
+
+################# 9 ##############
 require(TeachingDemos)
 
 for (i in 1:nrow(df))
     # subplot(barplot(height=as.numeric(as.character(unlist(df[i, 2:4],
     # use.names=F))),axes=F,  col=rainbow(3), ylim=range(df[,2:4])),
     # x=df[i, 'LON'], y=df[i, 'LAT'], size=c(.6, .6))
-
+##################################
 
 subplot(pie(as.numeric(as.character(unlist(df[i, 2:4], use.names=F))),axes=F,  col=rainbow(6), ylim=range(df[,2:4])),
  x=df[i, 'LON'], y=df[i, 'LAT'], size=c(.6, .6))
