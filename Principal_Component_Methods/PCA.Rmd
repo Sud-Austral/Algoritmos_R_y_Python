@@ -11,9 +11,11 @@ knitr::opts_chunk$set(echo = TRUE)
 http://www.sthda.com/english/articles/31-principal-component-methods-in-r-practical-guide/112-pca-principal-component-analysis-essentials/
 ## PCA
 
-El análisis de componentes principales (PCA) nos permite resumir y visualizar información de un conjunto de datos de individuos u observaciones descritos por múltiples variables cuantitativas interrelacionadas. Cada variable podría considerarse como una dimensión diferente. Si tiene más de 3 variables en sus conjuntos de datos, podría ser muy difícil visualizar un hiperespacio multidimensional.
+El análisis de componentes principales (PCA) nos permite resumir y visualizar información de un conjunto de observaciones descritas por múltiples variables cuantitativas interrelacionadas. 
 
-El análisis de componentes principales se utiliza para extraer la información importante de una tabla de datos multivariada y para expresar esta información como un nuevo conjunto reducido de nuevas variables llamadas componentes principales. Estas nuevas variables corresponden a una combinación lineal de los originales. El número de componentes principales es menor o igual que el número de variables originales.
+Cada variable podría considerarse como una dimensión diferente. Si tiene más de 3 variables en sus conjuntos de datos, podría ser muy difícil visualizar un hiperespacio multidimensional.
+
+El análisis de componentes principales se utiliza para extraer la información importante de una tabla de datos multivariada y para expresar esta información como un nuevo conjunto reducido de nuevas variables llamadas componentes principales. Estas nuevas variables corresponden a una combinación lineal de los originales. El número de componentes principales es menor o igual al número de variables originales.
 
 La información en un conjunto de datos dado corresponde a la variación total que contiene. El objetivo de PCA es identificar direcciones (o componentes principales) a lo largo de los cuales la variación en los datos es máxima.
 
@@ -21,25 +23,19 @@ En otras palabras, PCA reduce la dimensionalidad de los datos multivariados a do
 
 ## Introduccion
 
-Comprender los detalles de PCA requiere conocimientos de álgebra lineal.
-
-En la gráfica 1A a continuación, los datos se representan en el sistema de coordenadas X-Y. La reducción de la dimensión se logra mediante la identificación de las direcciones principales, llamadas componentes principales, en las que los datos varían.
+La reducción de la dimensión se logra mediante la identificación de las direcciones principales, llamadas componentes principales, en las que los datos varían.
 
 PCA supone que las direcciones con las variaciones más grandes son las más "importantes" (es decir, las más principales).
 
-En la figura siguiente, el eje PC1 es la primera dirección principal a lo largo de la cual las muestras muestran la mayor variación. El eje PC2 es la segunda dirección más importante y es ortogonal al eje PC1.
-
-La dimensionalidad de nuestros datos bidimensionales se puede reducir a una sola dimensión proyectando cada muestra en el primer componente principal (Gráfico 1B)
-
 Técnicamente hablando, la cantidad de varianza retenida por cada componente principal se mide por el llamado valor propio (eigenvalue).
 
-El método PCA es particularmente útil cuando las variables dentro del conjunto de datos están altamente correlacionadas. La correlación indica que hay redundancia en los datos. Debido a esta redundancia, PCA puede usarse para reducir las variables originales en un número menor de nuevas variables (= componentes principales) que explican la mayor parte de la varianza en las variables originales.
+El método PCA es particularmente útil cuando las variables dentro del conjunto de datos están altamente correlacionadas. La correlación indica que hay redundancia en los datos. Debido a esta redundancia, PCA puede usarse para reducir las variables originales en un número menor de nuevas variables (componentes principales) que explican la mayor parte de la varianza en las variables originales.
 
 En conjunto, el objetivo principal del análisis de componentes principales es:
 
-     identificar patrones ocultos en un conjunto de datos,
-     reducir la dimensionalidad de los datos eliminando el ruido y la redundancia en los datos,
-     identificar variables correlacionadas
+1 identificar patrones ocultos en un conjunto de datos,
+2 reducir la dimensionalidad de los datos eliminando el ruido y la redundancia en los datos,
+3 identificar variables correlacionadas
 
 ```{r pca 01}
 
@@ -90,6 +86,15 @@ typeof(delitos_2019$robo_con_vio)
 delitos_2019.active <- na.omit(delitos_2019)
 ```
 
+Valores propios / variaciones
+
+Como se describió en secciones anteriores, los valores propios miden la cantidad de variación retenida por cada componente principal. Los valores propios son grandes para las primeras PC y pequeños para las PC posteriores. Es decir, las primeras PC corresponden a las direcciones con la cantidad máxima de variación en el conjunto de datos.
+
+Examinamos los valores propios para determinar el número de componentes principales a considerar. Los valores propios y la proporción de variaciones (es decir, información) retenidos por los componentes principales (PC) se pueden extraer mediante la función get_eigenvalue () [paquete factoextra].
+
+
+
+
 ```{r pca 02}
 head(delitos_2019.active)
  res.pca <- PCA(delitos_2019.active, graph = FALSE)
@@ -98,6 +103,23 @@ eig.val <- get_eigenvalue(res.pca)
 eig.val
 fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))
 ```
+
+La suma de todos los valores propios da una varianza total de 10.
+
+La proporción de variación explicada por cada valor propio se da en la segunda columna. Por ejemplo, 4.124 dividido por 10 es igual a 0.4124, o aproximadamente el 41.24% de la variación se explica por este primer valor propio. El porcentaje acumulado explicado se obtiene sumando las proporciones sucesivas de variación explicadas para obtener el total acumulado. Por ejemplo, 41.242% más 18.385% es igual a 59.627%, y así sucesivamente. Por lo tanto, aproximadamente el 59.627% de la variación se explica por los dos primeros valores propios juntos.
+
+Los valores propios se pueden usar para determinar el número de componentes principales a retener después de PCA (Kaiser 1961):
+
+     Un valor propio> 1 indica que las PC representan más varianza que la contabilizada por una de las variables originales en los datos estandarizados. Esto se usa comúnmente como un punto de corte para el cual se retienen las PC. Esto es válido solo cuando los datos están estandarizados.
+
+     También puede limitar el número de componentes a ese número que representa una cierta fracción de la varianza total. Por ejemplo, si está satisfecho con el 70% de la varianza total explicada, use el número de componentes para lograrlo.
+
+Desafortunadamente, no hay una forma objetiva bien aceptada de decidir cuántos componentes principales son suficientes. Esto dependerá del campo de aplicación específico y del conjunto de datos específico. En la práctica, tendemos a mirar los primeros componentes principales para encontrar patrones interesantes en los datos.
+
+En nuestro análisis, los primeros tres componentes principales explican el 72% de la variación. Este es un porcentaje aceptablemente grande.
+
+Un método alternativo para determinar el número de componentes principales es mirar un diagrama de pantalla, que es el diagrama de valores propios ordenados de mayor a menor. El número de componentes se determina en el punto, más allá del cual los valores propios restantes son relativamente pequeños y de tamaño comparable (Jollife 2002, Peres-Neto, Jackson y Somers (2005)).
+
 
 ```{r pca 03}
 
