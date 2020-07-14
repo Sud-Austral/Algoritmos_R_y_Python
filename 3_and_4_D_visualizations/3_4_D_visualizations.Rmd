@@ -17,6 +17,27 @@ library("plot3D")
 data(iris)
 head(iris)
 
+delitos_2019 <- read.csv("C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_DS/DMCS/dmcs_2019.csv",
+  header = TRUE,
+  stringsAsFactors = FALSE, 
+  strip.white = TRUE,
+  sep = ';',
+  row.names=1)
+
+delitos_2019$robo_con_vio <- as.numeric(delitos_2019$robo_con_vio)
+delitos_2019$robo_con_fuerza <- as.numeric(delitos_2019$robo_con_fuerza)
+delitos_2019$Robo_acceso_vehi <- as.numeric(delitos_2019$Robo_acceso_vehi)
+
+# x, y and z coordinates
+xx <- delitos_2019$robo_con_vio
+yy <- delitos_2019$robo_con_fuerza
+zz <- delitos_2019$Robo_acceso_vehi
+
+scatter3D(xx, yy, zz, clab = c("Sepal", "Width (cm)"))
+
+scatter3D(xx, yy, zz, colvar = NULL, col = "blue",
+          pch = 19, cex = 0.5)
+
 # x, y and z coordinates
 x <- sep.l <- iris$Sepal.Length
 y <- pet.l <- iris$Petal.Length
