@@ -1,0 +1,104 @@
+---
+title: "PCA"
+author: "Christian Castro"
+date: "13-07-2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## PCA
+
+El análisis de componentes principales (PCA) nos permite resumir y visualizar información de un conjunto de datos de individuos u observaciones descritos por múltiples variables cuantitativas interrelacionadas. Cada variable podría considerarse como una dimensión diferente. Si tiene más de 3 variables en sus conjuntos de datos, podría ser muy difícil visualizar un hiperespacio multidimensional.
+
+El análisis de componentes principales se utiliza para extraer la información importante de una tabla de datos multivariada y para expresar esta información como un nuevo conjunto reducido de nuevas variables llamadas componentes principales. Estas nuevas variables corresponden a una combinación lineal de los originales. El número de componentes principales es menor o igual que el número de variables originales.
+
+La información en un conjunto de datos dado corresponde a la variación total que contiene. El objetivo de PCA es identificar direcciones (o componentes principales) a lo largo de los cuales la variación en los datos es máxima.
+
+En otras palabras, PCA reduce la dimensionalidad de los datos multivariados a dos o tres componentes principales, que pueden visualizarse gráficamente, con una pérdida mínima de información.
+
+## Introduccion
+
+Comprender los detalles de PCA requiere conocimientos de álgebra lineal.
+
+En la gráfica 1A a continuación, los datos se representan en el sistema de coordenadas X-Y. La reducción de la dimensión se logra mediante la identificación de las direcciones principales, llamadas componentes principales, en las que los datos varían.
+
+PCA supone que las direcciones con las variaciones más grandes son las más "importantes" (es decir, las más principales).
+
+En la figura siguiente, el eje PC1 es la primera dirección principal a lo largo de la cual las muestras muestran la mayor variación. El eje PC2 es la segunda dirección más importante y es ortogonal al eje PC1.
+
+La dimensionalidad de nuestros datos bidimensionales se puede reducir a una sola dimensión proyectando cada muestra en el primer componente principal (Gráfico 1B)
+
+Técnicamente hablando, la cantidad de varianza retenida por cada componente principal se mide por el llamado valor propio (eigenvalue).
+
+El método PCA es particularmente útil cuando las variables dentro del conjunto de datos están altamente correlacionadas. La correlación indica que hay redundancia en los datos. Debido a esta redundancia, PCA puede usarse para reducir las variables originales en un número menor de nuevas variables (= componentes principales) que explican la mayor parte de la varianza en las variables originales.
+
+En conjunto, el objetivo principal del análisis de componentes principales es:
+
+     identificar patrones ocultos en un conjunto de datos,
+     reducir la dimensionalidad de los datos eliminando el ruido y la redundancia en los datos,
+     identificar variables correlacionadas
+
+```{r cars}
+library("FactoMineR")
+library("factoextra")
+
+data(decathlon2)
+head(decathlon2)
+
+# Comenzamos extrayendo el subconjunto de individuos activos y variables activas para el análisis del componente principal:
+decathlon2.active <- decathlon2[1:23, 1:10]
+head(decathlon2.active[, 1:6], 4)
+
+# Estandarizacion de los datos
+#La función de base R `scale() se puede utilizar para estandarizar los datos. Toma una matriz numérica como entrada y realiza el escalado en las columnas.
+
+#Tenga en cuenta que, por defecto, la función PCA () [en FactoMineR], estandariza los datos automáticamente durante el PCA; así que no necesita hacer esta transformación antes del PCA.
+
+# PCA(X, scale.unit = TRUE, ncp = 5, graph = TRUE)
+
+# Donde:
+# X: un marco de datos. Las filas son individuos y las columnas son variables numéricas.
+# scale.unit: un valor lógico. Si es VERDADERO, los datos se escalan a la varianza de la unidad antes del análisis. Esta estandarización a la misma escala evita que algunas variables se vuelvan dominantes solo por sus grandes unidades de medida. Hace variable comparable.
+# ncp: número de dimensiones mantenidas en los resultados finales.
+# gráfico: un valor lógico. Si es VERDADERO, se muestra un gráfico.
+
+# El siguiente código R calcula el análisis de componentes principales en los individuos / variables activos:
+
+res.pca <- PCA(decathlon2.active, graph = FALSE)
+print(res.pca)
+
+eig.val <- get_eigenvalue(res.pca)
+eig.val
+
+fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))
+
+
+
+
+
+var <- get_pca_var(res.pca)
+var
+# Coordinates
+head(var$coord)
+# Cos2: quality on the factore map
+head(var$cos2)
+# Contributions to the principal components
+head(var$contrib)
+
+# Coordinates of variables
+head(var$coord, 4)
+
+fviz_pca_var(res.pca, col.var = "black")
+
+
+```
+
+
+```{r pressure, echo=FALSE}
+
+```
+
+
