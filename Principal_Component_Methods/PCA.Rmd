@@ -41,7 +41,7 @@ En conjunto, el objetivo principal del análisis de componentes principales es:
      reducir la dimensionalidad de los datos eliminando el ruido y la redundancia en los datos,
      identificar variables correlacionadas
 
-```{r cars}
+```{r pca 01}
 
 library("FactoMineR")
 library("factoextra")
@@ -79,23 +79,18 @@ delitos_2019$robo_vehi <- as.numeric(delitos_2019$robo_vehi)
 delitos_2019$robo_acce_vehi <- as.numeric(delitos_2019$robo_acce_vehi)
 delitos_2019$robo_lugar_h <- as.numeric(delitos_2019$robo_lugar_h)
 delitos_2019$robo_lugar_nh <- as.numeric(delitos_2019$robo_lugar_nh)
-
 delitos_2019$robos_con_fuer_otros <- as.numeric(delitos_2019$robos_con_fuer_otros )
-
-
 delitos_2019$hurtos<- as.numeric(delitos_2019$hurtos)
 delitos_2019$lesiones <- as.numeric(delitos_2019$lesiones)
 delitos_2019$lesiones_lev <- as.numeric(delitos_2019$lesiones_lev)
 delitos_2019$lesiones_gra <- as.numeric(delitos_2019$lesiones_gra)
-
-
 delitos_2019$violacion <- as.numeric(delitos_2019$violacion)
 delitos_2019$homicidio <- as.numeric(delitos_2019$homicidio)
-
-
 typeof(delitos_2019$robo_con_vio)
 delitos_2019.active <- na.omit(delitos_2019)
+```
 
+```{r pca 02}
 head(delitos_2019.active)
  res.pca <- PCA(delitos_2019.active, graph = FALSE)
  print(res.pca)
@@ -104,9 +99,7 @@ eig.val
 fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))
 ```
 
-
-
-```{r cars 10}
+```{r pca 03}
 
 data(decathlon2)
 head(decathlon2)
