@@ -419,45 +419,46 @@ library(xlsx)</code></pre>
 ##     createFreezePane, createSheet, createSplitPane, getCellStyle,
 ##     getSheets, loadWorkbook, removeSheet, saveWorkbook, setCellStyle,
 ##     setColumnWidth, setRowHeight</code></pre>
-<pre class="r"><code># github_link &lt;- &quot;https://raw.githubusercontent.com/Sud-Austral/Bases_de_Datos_DS/master/DMCS/Tasa%20Anual_DENUNCIA_Robo_con_vio.csv&quot;
+<pre class="r"><code># para leer un repositorio privado:
+# github_link &lt;- &quot;https://raw.githubusercontent.com/Sud-Austral/Bases_de_Datos_DS/master/DMCS/Tasa%20Anual_DENUNCIA_Robo_con_vio.csv&quot;
 # api_key &lt;- &quot;1913b82cc62967f3e5fe93e9ce176c806e0703ec&quot;
-# req &lt;- GET(github_link, 
-#            add_headers(Authorization = paste(&quot;token&quot;, api_key)))
+# req &lt;- GET(github_link, add_headers(Authorization = paste(&quot;token&quot;, api_key)))
+
+# para ller un pepositorio: tiene un error.
 library(readr)
-data &lt;- read_csv( &quot;https://raw.githubusercontent.com/Sud-Austral/Bases_de_Datos_DS/master/DMCS/Tasa%20Anual_DENUNCIA_Robo_con_vio.csv&quot;)</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   `TASA DE DENUNCIA POR DELITOS DE ROBOS CON VIOLENCIA O INTIMIDACI&lt;d3&gt;N;;;;;;;;;;;;;;;;;;` = col_character()
-## )</code></pre>
-<pre><code>## Warning: 419 parsing failures.
-## row col  expected     actual                                                                                                                 file
-##   4  -- 1 columns 16 columns &#39;https://raw.githubusercontent.com/Sud-Austral/Bases_de_Datos_DS/master/DMCS/Tasa%20Anual_DENUNCIA_Robo_con_vio.csv&#39;
-##   5  -- 1 columns 16 columns &#39;https://raw.githubusercontent.com/Sud-Austral/Bases_de_Datos_DS/master/DMCS/Tasa%20Anual_DENUNCIA_Robo_con_vio.csv&#39;
-##   6  -- 1 columns 16 columns &#39;https://raw.githubusercontent.com/Sud-Austral/Bases_de_Datos_DS/master/DMCS/Tasa%20Anual_DENUNCIA_Robo_con_vio.csv&#39;
-##   7  -- 1 columns 16 columns &#39;https://raw.githubusercontent.com/Sud-Austral/Bases_de_Datos_DS/master/DMCS/Tasa%20Anual_DENUNCIA_Robo_con_vio.csv&#39;
-##   8  -- 1 columns 16 columns &#39;https://raw.githubusercontent.com/Sud-Austral/Bases_de_Datos_DS/master/DMCS/Tasa%20Anual_DENUNCIA_Robo_con_vio.csv&#39;
-## ... ... ......... .......... ....................................................................................................................
-## See problems(...) for more details.</code></pre>
-<pre class="r"><code>write.csv(data,&#39;data.csv&#39;)
+# data &lt;- read_csv( &quot;https://raw.githubusercontent.com/Sud-Austral/Bases_de_Datos_DS/master/DMCS/Tasa%20Anual_DENUNCIA_Robo_con_vio.csv&quot;)
+# write.csv(data,&#39;data.csv&#39;)
 
 
-# ,sep=&quot;;&quot;,dec=&quot;, &amp; .&quot;)
-# # This works
-# csv_file &lt;- content(req, type = &quot;text/csv&quot;)
-# write.csv(csv_file,&#39;csv_file&#39;)
+data &lt;- read.csv(&quot;C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_DS/DMCS/dmcs_2019.csv&quot;,
+  header = TRUE,
+  stringsAsFactors = FALSE, 
+  strip.white = TRUE,
+  sep = &#39;;&#39;)
 
-
-
-# urlfile &lt;- &quot;https://raw.githubusercontent.com/Sud-Austral/Bases_de_Datos_DS/master/DMCS/Tasa%20Anual_DENUNCIA_Robo_con_vio.csv&quot;
-# destfile &lt;- &quot;C:/Users/usuario/Documents/GitHub_Personal/Algoritmos_R_y_PowerBI/Principal_Component_Methods/delin.csv&quot;
-# download.file(url, destfile)
-
-
-# robo_con_vio&lt;-read.csv(url(urlfile))
-# write.csv(robo_con_vio,&#39;robo_con_vio.csv&#39;)
-
-
-library(&quot;xlsx&quot;)
+head(data)</code></pre>
+<pre><code>##          Comuna robo_con_vio robo_con_sor robo_con_fuerza robo_de_vehi
+## 1         Arica      272.978      130.304         858.521      195.044
+## 2     Camarones       81.433        0.000         732.899        0.000
+## 3 General Lagos        0.000        0.000         496.894        0.000
+## 4         Putre        0.000       40.112         200.562        0.000
+## 5 Alto Hospicio      418.043      139.348        1131.696      258.558
+## 6       Iquique      270.190      403.207         995.317      166.733
+##   Robo_acceso_vehi robo_lugar_habi robo_lugar_no_hab robos_otros  hurtos
+## 1          201.229         232.568           182.673      47.008 503.484
+## 2          162.866         244.300           244.300      81.433 895.765
+## 3            0.000         248.447           248.447       0.000 372.671
+## 4           80.225           0.000           120.337       0.000 561.572
+## 5          194.925         434.958           203.786      39.468 338.300
+## 6          462.326         131.169           194.907      40.182 729.745
+##   lesiones lesiones_leves lesiones_graves violacion homicidio
+## 1  370.294        257.309         112.985    25.154     1.649
+## 2  488.599        488.599           0.000     0.000     0.000
+## 3    0.000          0.000           0.000     0.000     0.000
+## 4  361.011        280.786          80.225    40.112     0.000
+## 5  366.492        287.555          78.937    21.748     4.833
+## 6  432.305        355.173          77.131    18.936     1.386</code></pre>
+<pre class="r"><code>library(&quot;xlsx&quot;)
 # robo_con_vio &lt;- read.xlsx(delin.xlsx, 1) 
 # robo_con_vio &lt;- read_excel(&quot;output.xlsx&quot;)
 

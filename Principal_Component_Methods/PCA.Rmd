@@ -59,13 +59,18 @@ library(xlsx)
 # req <- GET(github_link, add_headers(Authorization = paste("token", api_key)))
 
 # para ller un pepositorio: tiene un error.
-# library(readr)
+library(readr)
 # data <- read_csv( "https://raw.githubusercontent.com/Sud-Austral/Bases_de_Datos_DS/master/DMCS/Tasa%20Anual_DENUNCIA_Robo_con_vio.csv")
 # write.csv(data,'data.csv')
 
 
+data <- read.csv("C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_DS/DMCS/dmcs_2019.csv",
+  header = TRUE,
+  stringsAsFactors = FALSE, 
+  strip.white = TRUE,
+  sep = ';')
 
-
+head(data)
 
 library("xlsx")
 # robo_con_vio <- read.xlsx(delin.xlsx, 1) 
