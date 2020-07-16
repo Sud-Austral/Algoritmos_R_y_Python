@@ -1,3 +1,3 @@
-# Algoritmos_R_y_PowerBI
+# Algoritmos en R y Python y su implementación en PowerBI
 
-![](R.png)
+![](Rypowerbi.png)
