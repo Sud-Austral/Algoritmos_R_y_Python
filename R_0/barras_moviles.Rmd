@@ -1,0 +1,97 @@
+---
+title: "Ranking de las 15 comunas con mayores casos activos"
+author: "DataIntelligence"
+date: "23-06-2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r uno, echo=FALSE, include=FALSE}
+library(tidyverse)
+library(gganimate)
+library(readxl)
+library(janitor)
+library(dplyr)
+library(readxl)
+# la siguiente linea impide el despliegue de advertencias en forma local:
+options(warn = -1)
+
+library(tidyverse)
+library(gghighlight)
+library(magrittr)
+
+library(readr)
+library(ape)
+library(ggdendro)
+library(rmarkdown)
+library(stringr)
+
+library(ggplot2)
+library(gganimate)
+theme_set(theme_bw())
+
+covid19 <- read_xlsx("C:/Users/usuario/Documents/GitHub/Analisis_covid19_con_R/proyecto_integrado/geo_Aypyt/Covid.xlsx")
+covid19$Fecha <- excel_numeric_to_date(covid19$Fecha)
+covid19 <- covid19 %>% select(Comuna,Casos_Activos, Fecha) 
+```   
+  
+
+```{r tres, echo=FALSE, include=FALSE}  
+
+gdp_formatted <- covid19 %>%
+  group_by(Fecha) %>%
+  # The * 1 makes it possible to have non-integer ranks while sliding
+  mutate(rank = rank(-Casos_Activos),
+         Value_rel = Casos_Activos,
+         Value_lbl = paste0(" ",round(Casos_Activos))) %>%
+  group_by(Comuna) %>% 
+  filter(rank <=15) %>% filter(Fecha > "2020-03-24") %>%
+  ungroup()
+
+# Animation
+```  
+```{r cuatro, echo=FALSE}  
+anim <- ggplot(gdp_formatted, aes(rank, group = Comuna, 
+                fill = as.factor(Comuna), color = as.factor(Comuna))) +
+  geom_tile(aes(y = Casos_Activos/2,
+                height = Casos_Activos,
+                width = 0.9), alpha = 0.8, color = NA) +
+  geom_text(aes(y = 0, label = paste(Comuna, " ")), vjust = 0.2, hjust = 1) +
+  geom_text(aes(y=Casos_Activos,label = Value_lbl, hjust=0)) +
+  coord_flip(clip = "off", expand = FALSE) +
+  scale_y_continuous(labels = scales::comma) +
+  scale_x_reverse() +
+  guides(color = FALSE, fill = FALSE) +
+  theme(axis.line=element_blank(),
+        axis.text.x=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks=element_blank(),
+        axis.title.x=element_blank(),
+         axis.title.y=element_blank(),
+        legend.position="none",
+        panel.background=element_blank(),
+        panel.border=element_blank(),
+        panel.grid.major=element_blank(),
+        panel.grid.minor=element_blank(),
+        panel.grid.major.x = element_line( size=.1, color="grey" ),
+        panel.grid.minor.x = element_line( size=.1, color="grey" ),
+        plot.title=element_text(size=25, hjust=0.5, face="bold", colour="grey", vjust=-1),
+        plot.subtitle=element_text(size=18, hjust=0.5, face="italic", color="grey"),
+        plot.caption =element_text(size=8, hjust=0.5, face="italic", color="grey"),
+        plot.background=element_blank(),
+       plot.margin = margin(2,2, 2, 4, "cm")) +
+  transition_states(Fecha, transition_length = 4, state_length = 1, wrap = FALSE) +
+  view_follow(fixed_x = TRUE)  +
+  labs(title = 'Casos activos por fecha : {closest_state}',  
+       subtitle  =  "Las 15 comunas con los mayores casos",
+       caption  = "Casos de Covid19 activos | Fuentes de datos: DataIntelligence") 
+
+# For GIF
+animate(anim, 200, fps = 2,  width = 1200, height = 1000, 
+        renderer = gifski_renderer("gganim.gif"), end_pause = 15, start_pause =  15) 
+
+```
+
