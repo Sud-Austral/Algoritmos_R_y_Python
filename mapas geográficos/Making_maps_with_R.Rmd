@@ -1,0 +1,176 @@
+---
+title: "Making_maps_with_R"
+author: "Christian Castro"
+date: "16-07-2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# R 4.0.2
+
+# 
+```
+
+## Making maps with 
+https://robsalasco.github.io/sinimr/
+https://rpubs.com/monicagutierrez/mapasgoogle
+https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html
+https://cran.r-project.org/web/packages/ggmap/readme/README.html
+
+```{r 1}
+library(sf)
+library(raster)
+library(dplyr)
+library(spData)
+# install.packages("spDataLarge", repos = "https://nowosad.github.io/drat/", type = "source")
+library(spDataLarge)
+
+library(tmap)    # for static and interactive maps
+library(leaflet) # for interactive maps
+library(ggplot2) # tidyverse data visualization package
+library(shiny)   # for web applications
+
+library(dplyr)
+library(sinimr)
+library(sf)
+library(tmap)
+
+varcode <- 882
+var <- get_sinim(varcode, 2018, 
+                 region = 13, 
+                 truevalue = T, 
+                 geometry = T, 
+                 auc = T, 
+                 unit = "limites")
+
+gran_santiago_plot <- tm_shape(var) +
+  tm_fill(col = "value",
+          palette = "BuPu", 
+          border.col = "white", 
+          border.alpha = 0.5,
+          lwd=1,
+          style = "jenks",
+          title = get_sinim_var_name(varcode))+
+  tm_text("municipality", size = 0.4, style="jenks") +
+  tm_legend(legend.position = c("left", "top"), legend.title.size = 1, legend.text.size = 0.6) +
+  tm_compass(type = "8star", position = c(.85, .80)) +
+  tm_scale_bar(breaks = c(0, 10), text.size = 0.75, position = c("right", "bottom")) +
+  tm_credits("Fuente: Sistema Nacional de Información Municipal (SINIM), SUBDERE, Ministerio del Interior.", position=c("left", "bottom"), size=0.55)+
+  tm_layout(legend.width=1,
+            inner.margins = c(0.1, 0.1, 0.10, 0.1), 
+            legend.format = list(text.separator = "a", 
+                                 fun = mm)) +
+  tm_borders(col = 'black')
+
+
+gran_santiago_plot
+
+
+```
+```{python engine.path="C:/Users/usuario/anaconda3/python.exe"}
+
+```
+
+
+
+
+## Making maps with R
+```{r}
+library(ggplot2)
+library(dplyr)
+library(scales)
+library(RColorBrewer)
+library(maptools)
+library(plotly)
+library(sf)
+library(units)
+library(rgdal)
+library(ggplot2)
+library(rgeos)
+#import shape file
+
+eu.shp <- readOGR(dsn = "EU_shape", layer = "MyEurope") %>%
+  spTransform(CRS("+init=epsg:4326"))
+#import demo data
+
+eu.dt <- read.csv("Europe_shape_demo_data.csv",header = TRUE, sep = ';')
+colnames(eu.dt)[1] <- "CountryCode"
+ 
+#fortify shape file to get into dataframe 
+eu.shp.f <- fortify(eu.shp, region = "GMI_CNTRY")
+#rename the id column to match the CountryCode from the other dataset
+colnames(eu.shp.f)[6] <- "CountryCode"
+#merge with CountryCodes
+merge.shp <-merge(eu.shp.f, eu.dt, by="CountryCode", all.x=TRUE)
+fp <-merge.shp[order(merge.shp$order), ] 
+#delete countries that not match
+final.plot <- filter(fp, TotalExpense != "NA")
+ 
+#basic plot
+ggplot()  + 
+  geom_polygon(data = final.plot, aes(x = long, y = lat, group = group, fill =TotalExpense ), color = "black", size = 0.25) + 
+  coord_map() + 
+  scale_fill_distiller(name="Expenses", palette = "Oranges", breaks = pretty_breaks(n = 5))  + 
+  labs(title = "Travel Expenses 2011 - 2017") + 
+  theme(axis.line=element_blank(),
+        axis.text.x=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks=element_blank(),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        panel.background=element_blank(),
+        panel.border=element_blank(),
+        panel.grid.major=element_blank(),
+        panel.grid.minor=element_blank(),
+        plot.background=element_blank(),
+        plot.title = element_text(hjust = 0.5)
+  )
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
