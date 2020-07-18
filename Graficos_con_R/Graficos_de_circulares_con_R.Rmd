@@ -1,0 +1,232 @@
+---
+title: "Carga de la evolución del r0 de un conjunto de entidades en un csv"
+author: "DataIntelligence"
+date: "22-06-2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE,
+                      warning = FALSE
+)
+```
+No aparece Chillan ni Chillan viejo!
+```{r uno}
+library(knitr)
+library(kableExtra)
+library(janitor)
+library(dplyr)
+library(readxl)
+
+# la siguiente linea impide el despliegue de advertencias en forma local:
+options(warn = -1)
+
+library(tidyverse)
+library(gghighlight)
+library(magrittr)
+library(readr)
+library(ape)
+library(ggdendro)
+library(rmarkdown)
+library(ggplot2)
+library(gganimate)
+theme_set(theme_bw()) 
+
+```
+```{r dos}
+
+options("encoding" = "UTF-8")
+# covid19 <- read_xlsx("C:/Users/usuario/Desktop/covid9j.xlsx")
+
+covid19 <- read_xlsx("covid9j.xlsx")
+
+# covid19 <- read.csv("C:/Users/usuario/Desktop/covid_chile3.csv")
+# covid19 <- read_xlsx("C:/Users/usuario/Desktop/covid_chile3.xlsx")
+
+# corregimos el formato del dato fecha del excel:
+# covid19$Fecha <- excel_numeric_to_date(covid19$Fecha)
+
+# se declara un vector que almacene los valores de R0:
+R0_v <- c()
+comuna_v <- c()
+codigo_comuna_v <- c()
+region_v <- c()
+
+# secuencia <- c()
+
+datos_covid19_providencia <-  covid19 %>% filter(Comuna == "Providencia")
+datos_covid19_providencia
+
+datos_covid19_providencia <- kable(datos_covid19_providencia) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F)
+datos_covid19_providencia
+```
+
+
+Se debe corregir el problema de los codigos
+van del 1101 al 16305
+
+
+```{r tres}  
+
+# extraemos los codigos de las comunas:
+# for(t in 1101:1101)
+# {
+#   secuencia = covid19$"Codigo comuna"
+# }
+
+#print(secuencia)
+
+
+# **********
+ secuencia = covid19$"Codigo comuna"
+
+#  print(secuencia)
+# extraemos los codigos solo una vez:
+
+# **********
+ ux <- unique(secuencia)
+
+# ux <- 1107
+
+ # print(ux)
+
+
+
+
+for(t in ux)
+{
+        # construimos una subtabla que contenga solo las filas determinadas por un 
+        # codigo fijo:
+         comuna_en_cuestion = covid19[covid19$"Codigo comuna" == t,] 
+  #        
+  # if(!is.null(comuna_en_cuestion))
+  # {
+
+        longitud = nrow(comuna_en_cuestion)
+        comuna <- comuna_en_cuestion$Comuna 
+        codigo_comuna <- comuna_en_cuestion$"Codigo comuna" 
+        region <- comuna_en_cuestion$Region
+
+        
+        
+        
+        
+        if(nrow(comuna_en_cuestion) != 0 && (comuna_en_cuestion$Poblacion != 0 ))
+        {          
+                
+                # unique() devuelve un vector, un dataframe o una matriz como x,
+                # pero con sus elementos (o filas) duplicados eliminados.
+                # population = as.numeric(comuna_en_cuestion$Poblacion) %>% unique()
+                
+                # Si la tabla excel contiene el dato de la poblacion constante
+                # para todas las fechas no es necesario:
+                population = as.numeric(comuna_en_cuestion$Poblacion)
+                
+                # Construimos una subtabla con dos columnas: 
+                # los datos de los casos diarios y la fecha:
+                
+                # Notemos algo en este trozo de codigo: FUN = sum no hace nada porque 
+                # no se puede agrupar construyendo una suma ya que cada fecha es unica. 
+                # Es importante porque nos permite construir la subtabla que necesitamos:
+                
+                # La tabla se crea con los datos de las columnas invertidos: 
+                # primero la fecha, luego los casos diarios:
+                infectados.por.dia = 
+                aggregate(comuna_en_cuestion$"Casos Diarios" ~ 
+                comuna_en_cuestion$Fecha, FUN = sum)
+
+                fallecidos.por.dia = 
+                aggregate(comuna_en_cuestion$"Fallecidos Diarios" ~ 
+                comuna_en_cuestion$Fecha, FUN = sum)
+                
+                # sumamos a los infectados diarios los casos diarios y los fallecidos, 
+                # ya que el modelo SIR no considera a los fallecidos.
+                infectados.por.dia2 = 
+                infectados.por.dia[,2] + fallecidos.por.dia[,2]
+                
+                recuperados.por.dia = 
+                aggregate(comuna_en_cuestion$"Recuperados Diarios" ~
+                comuna_en_cuestion$Fecha, FUN = sum)
+                
+                # Los susceptibles por dia no es un valor agregado. 
+                # En todas las filas a la constante de                  
+                # poblacion se le restan los valores de infectados del dia y los                             # recuperados del dia:
+                susceptibles.por.dia = 
+                population - infectados.por.dia2 - recuperados.por.dia[,2]
+                
+                # Creamos la tabla SIR:
+                tabla.comuna = 
+                data.frame(unique(comuna_en_cuestion$Fecha), 
+                susceptibles.por.dia, infectados.por.dia2,recuperados.por.dia[,2])
+                
+                names(tabla.comuna) = 
+                c("Fecha", "Susceptibles", "Infectados", "Recuperados")
+                
+                # Obtenemos los valores que vamos a necesitar para correr nuestras                          # regresiones lineales para obtener R0:
+                x = tabla.comuna$Recuperados
+                y = population*log(tabla.comuna$Susceptibles)
+        }
+        
+        # Verifiquemos los valores obtenidos:
+        # print(tabla.comuna)
+        # print(x)
+        # print(y)
+        
+        # En esta seccion vamos almacenando en el vector a los valores de r0 en 
+        # intervalos desde el primer dia (puede ser desde el segundo, da lo mismo) 
+        # hasta el segundo dia, desde el primero hasta el tercero, desde el 
+        # primero hasta el cuarto y asi sucesivamente.
+        
+        # Declaramos una secuancia con los valores del estremo superior 
+        # de estos intervalos:
+        
+        # esta longitud es siempre 108
+        
+        m <- seq(2, longitud)
+        
+        for (i in m) 
+        {
+                xx <- x[1:i]
+                yy <- y[1:i]
+                estimacion.R0 = -summary(lm(yy ~ xx))$coefficients[2]
+                R0_v[i] <- estimacion.R0
+                comuna_v <- comuna
+                
+                
+                 codigo_comuna_v        <- codigo_comuna
+        region_v  <- region
+
+
+                
+                
+        }
+
+        eee <- data.frame( comuna_v, R0_v, codigo_comuna_v,  region_v)
+        
+        # print (longitud)
+        # print (comuna)
+        # print (a)
+        print(eee)
+
+        
+        
+        # eee <- kable(eee) %>%
+        # kable_styling(bootstrap_options = "striped", full_width = F)
+        # eee
+        
+        
+        
+        write.table(eee,'com_chile_R0.xlsx', col.names=F, append=T, sep = ",")
+        write.table(eee,'com_chile_R0.csv', col.names=F, append=T, sep = ",")
+                
+        R0_v <- c()
+        comuna_v <- c()
+        codigo_comuna_v <-  c()
+        region_v <-  c()
+       
+}
+```
