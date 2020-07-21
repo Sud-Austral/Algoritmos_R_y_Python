@@ -197,9 +197,6 @@ R0_2 <- ggplot(zona_norte_chico, aes(as.Date(fecha,  origin='1970-01-01'), R0)) 
         geom_text(x = 44034, y = 1.47, label = "1.46", size=7, color="red") +
         geom_text(x = 44034, y = 1.56, label = "1.53", size=7, color="red") +
         geom_text(x = 44034, y = 1.421, label = "1.40", size=7, color="red") +
-  
-  
-  
         geom_text(x = 43977, y = 1.038, label = "1.06", size=7, color="red") +
         geom_text(x = 43983, y = 1.043, label = "1.07", size=7, color="red") +
         geom_text(x = 43974, y = 1.32, label = "1.36", size=7, color="red") +
@@ -207,25 +204,10 @@ R0_2 <- ggplot(zona_norte_chico, aes(as.Date(fecha,  origin='1970-01-01'), R0)) 
         geom_text(x = 43985, y = 1.38, label = "1.41", size=7, color="red") +
           geom_text(x = 43991, y = 1.49, label = "1.52", size=7, color="red") +
           geom_text(x = 43996, y = 1.58, label = "1.61", size=7, color="red") +
-  
-  
-
             geom_text(x = 43956, y = 0.51, label = "0.54", size=7, color="red") +
-
             geom_text(x = 43977, y = 0.71, label = "0.76", size=7, color="red") +
             geom_text(x = 43993, y = 0.88, label = "0.91", size=7, color="red") +
-
             geom_text(x = 44006, y = 0.88, label = "0.92", size=7, color="red") +
-  
-  
-  
-  
-  
-  
-  
-  
-  
-
   
 labs(color = "Comunas") + ggtitle("Evolución diaria del Número Básico de Reproducción \n para las 5 Comunas principales de la Zona Norte Chico de Chile \n desde el 4 de Mayo al 20 de Julio del 2020") + xlab("DÍA") + ylab("Número Básico de Reproducción") +
     theme(plot.title = element_text(size = 28, face = "bold", hjust = 0.5),
@@ -346,29 +328,20 @@ R0_5 <- ggplot(zona_sur_austral, aes(as.Date(as.Date(fecha,  origin='1970-01-01'
   
     theme_economist()+scale_colour_economist() +
 
-    geom_text(x = 43942, y = 1.57, label = "1.54", size=7, color="red") +
-    geom_text(x =  43964, y = 1.89, label = "1.86", size=7, color="red") +
-      geom_text(x =  43984, y = 1.68, label = "1.65", size=7, color="red") +
-      geom_text(x = 44029, y = 1.92, label = "1.89", size=7, color="red") +
-      geom_text(x = 43940, y = 0.58, label = "0.61", size=7, color="red") +
-
-
-
-
-      geom_text(x = 43956, y = 0.78, label = "0.81", size=7, color="red") +
-        geom_text(x = 43977, y = 1.04, label = "1.07", size=7, color="red") +
-        geom_text(x = 44007, y =1.03, label = "1.06", size=7, color="red") +
-        geom_text(x = 44032, y = 1.54 , label = "1.57 ", size=7, color="red") +
-        geom_text(x = 44032, y = 1.69, label = "1.71", size=7, color="red") +
-  
-  
-  
-  
-  
-        geom_text(x = 44032, y =1.05, label = "1.08", size=7, color="red") +
-        geom_text(x = 44032, y = 1.29, label = "1.26", size=7, color="red") +
-        geom_text(x = 44032, y = 1.38, label = "1.41", size=7, color="red") +
-        geom_text(x = 44032 , y = 1.18, label = "1.21", size=7, color="red") +
+  geom_text(x = 43942, y = 1.57, label = "1.54", size=7, color="red") +
+  geom_text(x =  43964, y = 1.89, label = "1.86", size=7, color="red") +
+  geom_text(x =  43984, y = 1.68, label = "1.65", size=7, color="red") +
+  geom_text(x = 44029, y = 1.92, label = "1.89", size=7, color="red") +
+  geom_text(x = 43940, y = 0.58, label = "0.61", size=7, color="red") +
+  geom_text(x = 43956, y = 0.78, label = "0.81", size=7, color="red") +
+  geom_text(x = 43977, y = 1.04, label = "1.07", size=7, color="red") +
+  geom_text(x = 44007, y =1.03, label = "1.06", size=7, color="red") +
+  geom_text(x = 44032, y = 1.54 , label = "1.57 ", size=7, color="red") +
+  geom_text(x = 44032, y = 1.69, label = "1.71", size=7, color="red") +
+  geom_text(x = 44032, y =1.05, label = "1.08", size=7, color="red") +
+  geom_text(x = 44032, y = 1.29, label = "1.26", size=7, color="red") +
+  geom_text(x = 44032, y = 1.38, label = "1.41", size=7, color="red") +
+  geom_text(x = 44032 , y = 1.18, label = "1.21", size=7, color="red") +
 
 
 
@@ -440,47 +413,20 @@ R0_7 <- ggplot(zona_menores_R0, aes(as.Date(as.Date(fecha,  origin='1970-01-01')
      geom_text(x = 43980, y = 0.63, label = "0.67", size=7, color="red") + 
       geom_text(x = 43981, y = 0.98, label = "0.94", size=7, color="red") + 
       geom_text(x = 44020, y = 1.02, label = "0.97", size=7, color="red") + 
-
-  
-  
-  
-  
-  
-  
      geom_text(x = 43986, y = 0.54, label = "0.58", size=7, color="red") +  
      geom_text(x = 43999, y = 0.5, label = "0.54", size=7, color="red") + 
       geom_text(x = 43998, y = -0.67, label = "-0.63", size=7, color="red") + 
       geom_text(x = 44002, y = -0.2, label = "-0.17", size=7, color="red") + 
       geom_text(x = 44019, y = 0.79, label = "0.84", size=7, color="red") + 
-  
-  
-  
-  
-  
-  
      geom_text(x = 44029, y = 0.8, label = "0.85", size=7, color="red") +  
      geom_text(x = 44030, y = 1.14, label = "1.08", size=7, color="red") + 
       geom_text(x = 44033, y = 0.9, label = "0.89", size=7, color="red") + 
       geom_text(x = 44033, y = 1.06, label = "1.04", size=7, color="red") + 
       geom_text(x = 44033, y = 1.01, label = "0.98", size=7, color="red") + 
-  
-  
-  
-  
-  
-  
+
       geom_text(x = 44033, y = 0.84, label = "0.88", size=7, color="red") +  
      geom_text(x = 44033, y = 0.95, label = "0.96", size=7, color="red") + 
 
-  
-  
-  
-  
-  
-
-  
-  
-    
 labs(color = "Comunas") + ggtitle("Evolución diaria del Número Básico de Reproducción \n para las 5 Comunas con los menores valores de R0 \n desde el 27 de Mayo al 20 de Julio del 2020") +
     xlab("DÍA") + ylab("Número Básico de Reproducción") +
     theme(plot.title = element_text(size = 28, face = "bold", hjust = 0.5),
@@ -489,6 +435,9 @@ labs(color = "Comunas") + ggtitle("Evolución diaria del Número Básico de Repr
     legend.text=element_text(size=22)) +
     theme(legend.title = element_text(size=22, face="bold"))+
     theme(text = element_text(size=20)) 
+
+
+
 
 png(filename = "R0_7.png", width = 1200, height = 1000,
     pointsize = 12)
