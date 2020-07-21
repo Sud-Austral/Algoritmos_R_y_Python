@@ -20,7 +20,7 @@ library(kableExtra)
 library(janitor)
 library(dplyr)
 library(readxl)
-
+library(xlsx)
 # la siguiente linea impide el despliegue de advertencias en forma local:
 options(warn = -1)
 
@@ -38,10 +38,17 @@ theme_set(theme_bw())
 ```
 ```{r dos}
 
-options("encoding" = "UTF-8")
+# options("encoding" = "UTF-8")
 # covid19 <- read_xlsx("C:/Users/usuario/Desktop/covid9j.xlsx")
 
-covid19 <- read_xlsx("covid9j.xlsx")
+##########
+# covid19 <- read_xlsx("covid9j.xlsx")
+
+covid19 <- read_xlsx("covid_20_julio_3.xlsx")
+
+##########
+
+
 
 # covid19 <- read.csv("C:/Users/usuario/Desktop/covid_chile3.csv")
 # covid19 <- read_xlsx("C:/Users/usuario/Desktop/covid_chile3.xlsx")
@@ -66,8 +73,7 @@ datos_covid19_providencia
 ```
 
 
-Se debe corregir el problema de los codigos
-van del 1101 al 16305
+
 
 
 ```{r tres}  
@@ -82,13 +88,14 @@ van del 1101 al 16305
 
 
 # **********
- secuencia = covid19$"Codigo comuna"
+
+# secuencia = covid19$"Codigo comuna"
 
 #  print(secuencia)
 # extraemos los codigos solo una vez:
 
 # **********
- ux <- unique(secuencia)
+ ux <- unique(covid19$"Codigo comuna")
 
 # ux <- 1107
 
@@ -99,6 +106,8 @@ van del 1101 al 16305
 
 for(t in ux)
 {
+      if(t != "No Informado")
+      {
         # construimos una subtabla que contenga solo las filas determinadas por un 
         # codigo fijo:
          comuna_en_cuestion = covid19[covid19$"Codigo comuna" == t,] 
@@ -110,8 +119,8 @@ for(t in ux)
         comuna <- comuna_en_cuestion$Comuna 
         codigo_comuna <- comuna_en_cuestion$"Codigo comuna" 
         region <- comuna_en_cuestion$Region
-
-        
+        dia <- comuna_en_cuestion$"Día"
+        fecha <- comuna_en_cuestion$Fecha
         
         
         
@@ -199,13 +208,15 @@ for(t in ux)
                 
                  codigo_comuna_v        <- codigo_comuna
         region_v  <- region
-
+        
+        fecha_v <- fecha
+        dia_v <- dia
 
                 
                 
         }
 
-        eee <- data.frame( comuna_v, R0_v, codigo_comuna_v,  region_v)
+        eee <- data.frame( comuna_v, R0_v, codigo_comuna_v,  region_v, fecha_v, dia_v)
         
         # print (longitud)
         # print (comuna)
@@ -219,14 +230,15 @@ for(t in ux)
         # eee
         
         
+       # aca hay un problema pues por el cicli for se fuerza a escribir sobre una misma hoja y esto, no es permitido pues consta del mismo nombre. 
+       # write.xlsx(eee, 'R0_en_Chile.xlsx')
         
-        write.table(eee,'com_chile_R0.xlsx', col.names=F, append=T, sep = ",")
-        write.table(eee,'com_chile_R0.csv', col.names=F, append=T, sep = ",")
+        write.table(eee,'R0_en_Chile.csv', col.names=F, append=T, sep = ",")
                 
         R0_v <- c()
         comuna_v <- c()
         codigo_comuna_v <-  c()
         region_v <-  c()
-       
+}
 }
 ```
