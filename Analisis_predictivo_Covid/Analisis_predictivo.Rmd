@@ -35,8 +35,6 @@ colnames(covid19)
 datos_covid19_providencia <-  covid19 %>% filter(Comuna == "Providencia")
 datos_covid19_providencia
 
-
-
 # str(covid19)
 ```
 

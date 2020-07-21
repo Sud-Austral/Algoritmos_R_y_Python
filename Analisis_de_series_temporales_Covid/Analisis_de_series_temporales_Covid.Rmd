@@ -19,12 +19,8 @@ library(reticulate)
 library(knitr)
 library(kableExtra)
 library(car)
+library(forecast)
 ```
-
-## Analisis de series temporales 
-
-
-
 
 ```{r predict2, echo=FALSE}
 # El formato de la fecha en el excel esta en formato date
@@ -37,8 +33,81 @@ covid19$Fecha %<>% as.Date(format="%d/%m/%Y")
 covid19 %>% head(10) %>% kable()
 colnames(covid19)
 
-datos_covid19_providencia <-  covid19 %>% filter(Comuna == "Providencia")
+datos_covid19_providencia <-  covid19 %>% filter(Comuna == "Santiago")
 datos_covid19_providencia
 
 # str(covid19)
 ```
+
+
+
+```{r}
+ infectados.por.dia = aggregate(datos_covid19_providencia$'Casos Diarios' ~ datos_covid19_providencia$Fecha, FUN =sum)
+# 
+ fallecidos.por.dia = aggregate(datos_covid19_providencia$'Fallecidos Diarios' ~ datos_covid19_providencia$Fecha, FUN =sum)
+# # 
+ recuperados.por.dia = aggregate(datos_covid19_providencia$'Recuperados Diarios' ~ datos_covid19_providencia$Fecha, FUN =sum)
+ 
+tabla.Covid = data.frame(unique(datos_covid19_providencia$Fecha), infectados.por.dia[,2] ,  fallecidos.por.dia[,2], recuperados.por.dia[,2] )
+
+names(tabla.Covid) = c("Fecha", "Infectados", "Fallecidos", "Recuperados")
+
+head(tabla.Covid,10)
+
+```
+## Estudio para los infectados
+
+
+```{r}
+
+infectados = ts(tabla.Covid$Infectados, frequency = 7, start(1,4))
+infectados
+autoplot(infectados)
+
+components = decompose(infectados, type = "additive")
+components$seasonal
+
+autoplot(components)
+
+infectados.ajustados = infectados - components$seasonal
+autoplot(infectados.ajustados)
+```
+
+# Predicciones
+
+```{r}
+
+prediccion.infectados = HoltWinters(infectados.ajustados, gamma = FALSE)
+prediccion.infectados
+
+prediccion.infectados$SSE
+
+sqrt(prediccion.infectados$SSE)
+
+plot(prediccion.infectados)
+
+prediccion.infectados.semana = forecast:::forecast.HoltWinters(prediccion.infectados, h=7)
+prediccion.infectados.semana
+
+autoplot(prediccion.infectados.semana)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
