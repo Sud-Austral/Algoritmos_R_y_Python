@@ -42,9 +42,9 @@ theme_set(theme_bw())
 # covid19 <- read_xlsx("C:/Users/usuario/Desktop/covid9j.xlsx")
 
 ##########
-# covid19 <- read_xlsx("covid9j.xlsx")
+# El formato de la fecha en el excel esta en formato date
+covid19 <- read_xlsx("covid9j.xlsx")
 
-covid19 <- read_xlsx("covid_20_julio_3.xlsx")
 
 ##########
 

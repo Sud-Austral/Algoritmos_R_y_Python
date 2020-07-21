@@ -1,0 +1,44 @@
+---
+title: "Analisis_de_series_temporales_Covid"
+author: "Christian Castro"
+date: "21-07-2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r predict1, echo=FALSE}
+library(tidyverse)
+library(lubridate)
+library(magrittr)
+library(xlsx)
+library(readxl)
+library(reticulate)
+library(knitr)
+library(kableExtra)
+library(car)
+```
+
+## Analisis de series temporales 
+
+
+
+
+```{r predict2, echo=FALSE}
+# El formato de la fecha en el excel esta en formato date
+covid19 <- read_xlsx("C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_DS/covid_20_julio_3.xlsx")
+
+covid19$Region %<>% as.factor()
+covid19$Comuna %<>% as.factor()
+covid19$Fecha %<>% as.Date(format="%d/%m/%Y")
+
+covid19 %>% head(10) %>% kable()
+colnames(covid19)
+
+datos_covid19_providencia <-  covid19 %>% filter(Comuna == "Providencia")
+datos_covid19_providencia
+
+# str(covid19)
+```

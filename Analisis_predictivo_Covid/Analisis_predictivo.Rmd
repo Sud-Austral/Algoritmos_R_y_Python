@@ -1,6 +1,6 @@
 ---
-title: "Analisis_en_funcion_del_t"
-author: "Christian Castro"
+title: "Analisis predictivo sobre el Covid-19"
+author: "Data Intelligence"
 date: "21-07-2020"
 output: html_document
 ---
@@ -9,22 +9,107 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r predict1, echo=FALSE}
+library(tidyverse)
+library(lubridate)
+library(magrittr)
+library(xlsx)
+library(readxl)
+library(reticulate)
+library(knitr)
+library(kableExtra)
+library(car)
 ```
 
-## Including Plots
+```{r predict2, echo=FALSE}
+# El formato de la fecha en el excel esta en formato date
+covid19 <- read_xlsx("C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_DS/covid_20_julio_3.xlsx")
 
-You can also embed plots, for example:
+covid19$Region %<>% as.factor()
+covid19$Comuna %<>% as.factor()
+covid19$Fecha %<>% as.Date(format="%d/%m/%Y")
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+covid19 %>% head(10) %>% kable()
+colnames(covid19)
+
+datos_covid19_providencia <-  covid19 %>% filter(Comuna == "Providencia")
+datos_covid19_providencia
+
+
+
+# str(covid19)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Modelo de Regresión Lineal Simple
+
+Minimizaremos el error cuadratico medio.
+
+
+```{r predict3, echo=FALSE}
+
+mod1 <- lm(datos_covid19_providencia$'Casos Acumulados' ~ datos_covid19_providencia$'Fecha', data = datos_covid19_providencia)
+
+summary(mod1)
+```
+### Es válido nuestro modelo?
+
+```{r}
+plot(datos_covid19_providencia$'Fecha', datos_covid19_providencia$'Casos Acumulados')
+abline(mod1, col="blue")
+```
+
+## Distribución de los errores ajustados al modelo.
+## Graficaremos los residuos.
+
+```{r}
+# 1 Mientras mejor es el modelo, más aleatoria resulta la distribucion de los residuos.
+
+plot(mod1$residuals ~ mod1$fitted.values, xlab = "Valores Ajustados", ylab = "Residuos del modelo")
+
+# 2 las varianzas de los residuos tendrian que ser iguales, el modelo deberia ser homocedastico. Veamos si los residuos siguen una distribucion normal.
+
+residuos = mod1$residuals
+
+qqPlot(residuos, distribution = 'norm', mean(residuos), sd = sd(residuos))
+```
+
+Aunque los estadísticos de contraste parecían buenos, el modelo debe ser descartado, pues los residuos no se distribuyen de forma normal. 
+
+## Modelo de Regresión Exponencial.
+
+```{r}
+mod2 <- lm(log(datos_covid19_providencia$'Casos Acumulados') ~ datos_covid19_providencia$'Día', data = datos_covid19_providencia[datos_covid19_providencia$'Casos Acumulados'>0,])
+
+summary(mod2)
+```
+
+```{r}
+
+
+plot(datos_covid19_providencia$'Día', datos_covid19_providencia$'Casos Acumulados')
+
+lines(exp(mod2$coefficients[1])*exp(mod2$coefficients[2]*datos_covid19_providencia$'Día'), col = "blue")
+
+
+
+```
+
+```{r}
+plot(mod2$residuals ~ mod2$fitted.values, xlab = "Valores ajustados", ylab = "Residuos del modelo")
+residuos = mod2$residuals
+qqPlot(residuos, distribution = "norm", mean(residuos), sd = sd(residuos))
+```
+
+## Modelo de regresión potencial
+
+
+
+
+
+
+
+
+
+
+
