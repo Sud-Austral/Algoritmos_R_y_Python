@@ -1,15 +1,13 @@
 ---
-title: "Analisis_de_series_temporales_Covid"
-author: "Christian Castro"
+title: "Análisis de series temporales sobre el Covid'19 en Chile"
+author: "Data Intelligence"
 date: "21-07-2020"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-```
 
-```{r predict1, echo=FALSE}
 library(tidyverse)
 library(lubridate)
 library(magrittr)
@@ -20,7 +18,22 @@ library(knitr)
 library(kableExtra)
 library(car)
 library(forecast)
+
+# Introduccion muy basica a series temporales:
+# https://rpubs.com/rjuarez/ResumenFinalMCAA
+
+# Suavizados:
+# http://zevross.com/blog/2014/08/04/beautiful-plotting-in-r-a-ggplot2-cheatsheet-3/
+
+# Estudio mas avanzado de series temporales:
+# https://a-little-book-of-r-for-time-series.readthedocs.io/en/latest/src/timeseries.html
 ```
+
+```{r predict1, echo=T, results = 'hide'}
+
+```
+
+
 
 ```{r predict2, echo=FALSE}
 # El formato de la fecha en el excel esta en formato date
@@ -31,17 +44,19 @@ covid19$Comuna %<>% as.factor()
 covid19$Fecha %<>% as.Date(format="%d/%m/%Y")
 
 covid19 %>% head(10) %>% kable()
+
 colnames(covid19)
 
 datos_covid19_providencia <-  covid19 %>% filter(Comuna == "Santiago")
-datos_covid19_providencia
+
+datos_covid19_providencia %>% head(10) %>% kable()
 
 # str(covid19)
 ```
 
 
 
-```{r}
+```{r predict3, echo=FALSE}
  infectados.por.dia = aggregate(datos_covid19_providencia$'Casos Diarios' ~ datos_covid19_providencia$Fecha, FUN =sum)
 # 
  fallecidos.por.dia = aggregate(datos_covid19_providencia$'Fallecidos Diarios' ~ datos_covid19_providencia$Fecha, FUN =sum)
@@ -57,22 +72,59 @@ head(tabla.Covid,10)
 ```
 ## Estudio para los infectados
 
+Para analizar una serie de tiempo en R, el programa nos pide transformar los datos a una serie de tiempo. Para ello utilizamos el comando times series (ts) y establecemos la frecuencia y el inicio. 
+
+La frecuencia será semanal (7) e iniciamos el día jueves de la primera semana (1,4) 
+
 
 ```{r}
 
 infectados = ts(tabla.Covid$Infectados, frequency = 7, start(1,4))
 infectados
+```
+
+Grafiquemos la serie temporal:
+
+```{r}
 autoplot(infectados)
+```
 
+Observamos una tendencia y una estacionalidad leve.
+
+Toda serie de tiempo tiene:
+
+*1* un componente normal, 
+
+*2* una constante, 
+
+*3* una tendencia y 
+
+*4* un componente estacional
+
+Los obtenemos con el comando de R decompose:
+
+```{r}
 components = decompose(infectados, type = "additive")
-components$seasonal
 autoplot(components)
+```
 
+
+```{r}
+components$seasonal
+```
+
+
+
+```{r}
 infectados.ajustados = infectados - components$seasonal
 autoplot(infectados.ajustados)
 ```
 
-# Predicciones
+## Predicciones
+
+El método de Holt Winters se utiliza para realizar pronósticos del comportamiento de una serie temporal a partir de los datos previos. Utiliza un algoritmo iterativo que cada tiempo (mes o semana) realiza un pronóstico sobre el comportamiento de la serie en base a promedios  ponderados de los datos pasados.
+
+toda serie de tiempo tiene un componente normal, una constante, una tendencia y un componente estacional
 
 ```{r}
 
@@ -82,9 +134,12 @@ prediccion.infectados
 prediccion.infectados$SSE
 
 sqrt(prediccion.infectados$SSE)
-
 plot(prediccion.infectados)
+```
 
+
+
+```{r}
 prediccion.infectados.semana = forecast:::forecast.HoltWinters(prediccion.infectados, h=7)
 prediccion.infectados.semana
 

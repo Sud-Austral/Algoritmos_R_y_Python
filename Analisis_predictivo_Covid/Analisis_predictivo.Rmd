@@ -46,8 +46,9 @@ Minimizaremos el error cuadratico medio.
 
 ```{r predict3, echo=FALSE}
 
-mod1 <- lm(datos_covid19_providencia$'Casos Acumulados' ~ datos_covid19_providencia$'Fecha', data = datos_covid19_providencia)
-
+mod1 <- lm(datos_covid19_providencia$'Casos Acumulados' ~ datos_covid19_providencia$'Día', data = datos_covid19_providencia)
+summary(datos_covid19_providencia$'Casos Acumulados')
+sd(datos_covid19_providencia$'Casos Acumulados')
 summary(mod1)
 ```
 ### Es válido nuestro modelo?
@@ -101,7 +102,17 @@ qqPlot(residuos, distribution = "norm", mean(residuos), sd = sd(residuos))
 
 ## Modelo de regresión potencial
 
+```{r}
+mod3 <- lm(log(datos_covid19_providencia$'Casos Acumulados') ~ log(datos_covid19_providencia$'Día'), data = datos_covid19_providencia[datos_covid19_providencia$'Casos Acumulados' > 0,])
 
+summary(mod3)
+```
+
+```{r}
+mod4 <- lm(log(datos_covid19_providencia$'Casos Acumulados') ~ datos_covid19_providencia$'Día' + log(datos_covid19_providencia$'Día'), data = datos_covid19_providencia[datos_covid19_providencia$'Casos Acumulados' > 0,])
+
+summary(mod4)
+```
 
 
 
