@@ -61,12 +61,7 @@ shp_comunas_por_region <- shp_comunas_por_region %>% mutate(
 
 # Filtramos la base de datos:
 covid19_region = covid19[covid19$Region == "Arica y Parinacota", ]
-
-filter(covid19_region, covid19_region$'on-off' != 'OFF' | covid19_region$'on-off' != 'OUT TIME')
-
-
-
-
+covid19_region = filter(covid19_region, covid19_region$'on-off' != 'OFF' & covid19_region$'on-off' != 'OUT TIME')
 
 # Renombramos columnas de la base de datos:
 colnames(covid19_region)[3] <- "cod_comuna"
