@@ -27,6 +27,9 @@ library(forecast)
 
 # Estudio mas avanzado de series temporales:
 # https://a-little-book-of-r-for-time-series.readthedocs.io/en/latest/src/timeseries.html
+
+# interpretacion del Breusch-Pagan
+# https://rpubs.com/Jo_/regresion_lineal_simple
 ```
 
 ```{r predict1, echo=T, results = 'hide'}
