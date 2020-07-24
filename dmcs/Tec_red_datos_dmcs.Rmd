@@ -17,7 +17,7 @@ library(factoextra)
 
 ## Tecnicas de reduccion de dimensionalidad
 
-Clustering:
+Clustering: es un enfoque del aprendizaje supervizado.
 
 Aglometariva y divisiva
 
@@ -99,12 +99,46 @@ rect.hclust(hc, k=4, border="red")
 km <- kmeans(data, 4)
 km
 
-aggregate(data, )
+aggregate(data, by = list(cluster = km$cluster), mean)
 
+
+fviz_cluster(km, data = data)
 ```
 
+```{r}
+# minibatch k-means
+
+library(OpenImageR)
+library(ClusterR)
 
 
+
+```
+```{r}
+# tecnica de los k-medoides:
+# no inventa centros:
+ rownames(data) <-data$comuna
+ data$comuna<- NULL
+ # partition around medoids:
+ km <- pam(data, 4)
+ km
+ fviz_cluster(km)
+```
+
+```{r}
+# aplicaciones de grandes clusteres:
+# clustering large applications
+# extrae muestras aleatorias:
+ clarafit <- clara(data, 4, samples = 5)
+ clarafit
+  fviz_cluster(clarafit)
+
+```
+# Validacion del clustering.
+
+1 
+2 validacion interna: indice de DAM
+3 
 
 
 

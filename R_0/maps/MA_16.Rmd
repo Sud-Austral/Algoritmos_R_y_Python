@@ -52,13 +52,6 @@ covid19 <- read_xlsx("C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_
 ```{r cuerpo2, echo=FALSE}
 # Filtramos la base de datos de los shapes:
 
-# 
-# Región de Aysén del Gral.Ibañez del Campo
-# Aysén
-# 
-# Región de Magallanes y Antártica Chilena
-# Magallanes
-
 shp_comunas_por_region = shp_comunas_chile %>% filter(Region == "Región de Magallanes y Antártica Chilena")
 
 shp_comunas_por_region <- shp_comunas_por_region %>% mutate(
@@ -69,7 +62,7 @@ shp_comunas_por_region <- shp_comunas_por_region %>% mutate(
 
 # Filtramos la base de datos:
 covid19_region = covid19[covid19$Region == "Magallanes", ]
-covid19_region = filter(covid19_region, covid19_region$'on-off' != 'OFF' & covid19_region$'on-off' != 'OUT TIME')
+covid19_region = filter(covid19_region, covid19_region$'on-off' != 'OFF' & covid19_region$'on-off' != 'OUT TIME' & covid19_region$'Comuna' != 'No Informado')
 
 # Renombramos columnas de la base de datos:
 colnames(covid19_region)[3] <- "cod_comuna"

@@ -52,37 +52,7 @@ covid19 <- read_xlsx("C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_
 ```{r cuerpo2, echo=FALSE}
 # Filtramos la base de datos de los shapes:
 
-
-
-# 
-# Región de Ñuble
-# Ñuble
-# 
-# Región del Bío-Bío
-# Biobío
-# 
-# Región de La Araucanía
-# La Araucanía
-# 
-# Región de Los Ríos
-# Los Ríos
-# 
-# Región de Los Lagos
-# Los Lagos
-# 
-# Región de Aysén del Gral.Ibañez del Campo
-# Aysén
-# 
-# Región de Magallanes y Antártica Chilena
-# Magallanes
-
-
-
-
-
 shp_comunas_por_region = shp_comunas_chile %>% filter(Region == "Región de Ñuble")
-
-
 
 shp_comunas_por_region <- shp_comunas_por_region %>% mutate(
                 centroid = map(geometry, st_centroid),
@@ -92,7 +62,7 @@ shp_comunas_por_region <- shp_comunas_por_region %>% mutate(
 
 # Filtramos la base de datos:
 covid19_region = covid19[covid19$Region == "Ñuble", ]
-covid19_region = filter(covid19_region, covid19_region$'on-off' != 'OFF' & covid19_region$'on-off' != 'OUT TIME')
+covid19_region = filter(covid19_region, covid19_region$'on-off' != 'OFF' & covid19_region$'on-off' != 'OUT TIME' & covid19_region$'Comuna' != 'No Informado')
 
 # Renombramos columnas de la base de datos:
 colnames(covid19_region)[3] <- "cod_comuna"
