@@ -129,7 +129,7 @@ a <- ggplot(data) +
                 min.segment.length = 0
         ) + labs(subtitle = "Fecha: {current_frame}")
 animate(a, fps = 3, width = 750, height = 450)
-anim_save("CO_4_casos_activos.gif")
+anim_save("CO_5_casos_activos.gif")
 ```
 
 ### Muertes
@@ -145,5 +145,5 @@ a <- ggplot(data) +
                 min.segment.length = 0
         ) + labs(subtitle = "Fecha: {current_frame}")
 animate(a, fps = 3, width = 750, height = 450)
-anim_save("CO_4_muertes.gif")
+anim_save("CO_5_muertes.gif")
 ```
