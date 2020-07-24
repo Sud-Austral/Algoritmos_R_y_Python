@@ -1,0 +1,123 @@
+---
+title: "Tec_red_datos_dmcs"
+author: "Christian Castro"
+date: "24-07-2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width=20, fig.height=20)
+library(xlsx)
+library(ape)
+library(plotly)
+
+library(cluster)
+library(factoextra)
+```
+
+## Tecnicas de reduccion de dimensionalidad
+
+Clustering:
+
+Aglometariva y divisiva
+
+```{r trd1}
+
+
+delitos <- read.xlsx("C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_DS/dmcs1.xlsx", sheetIndex = 1, encoding = 'UTF-8', header = TRUE)
+
+
+# delitos_2019 <- read.csv("C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_DS/dmcs1.csv",
+#   header = TRUE,
+#   stringsAsFactors = FALSE, 
+#   strip.white = TRUE,
+#   sep = ';',
+#   row.names=1)
+
+# delitos_2019$robo_con_vio <- as.numeric(delitos_2019$robo_con_vio)
+# delitos_2019$robo_con_fuerza <- as.numeric(delitos_2019$robo_con_fuerza)
+# delitos_2019$Robo_acceso_vehi <- as.numeric(delitos_2019$Robo_acceso_vehi)
+
+data <- as.data.frame(scale(delitos[,3:16]))
+
+# data$comuna = delitos$UNIDAD.TERRITORIAL
+# rownames(data) <- delitos$UNIDAD.TERRITORIAL
+
+head(data)
+data
+
+# data <- subset(data,  select = c("Violacion"))
+
+
+
+
+```
+
+
+# cluster aglomerativo
+```{r trd2, echo=FALSE}
+
+hc <- hclust(dist(data, method = "euclidean"), method = "ward")
+hc
+plot(hc, hang = -0.01, cex = 0.8)
+
+hc2 <- hclust(dist(data, method = "euclidean"), method = "single")
+hc2
+plot(hc2, hang = -0.01, cex = 0.8)
+
+# colors = c("red", "blue", "green", "black")
+# clus4 = cutree(hc, 4)
+# png(filename="dendro_circular.png", width=12, height=12, units="in", res=1000)
+# plot(as.phylo(hc), type = "fan", tip.color = colors[clus4],
+#      label.offset = 1, cex = 0.4)
+# dev.off()
+
+```
+```{r}
+#clusters jerarquicos divisitivos
+
+dv <- diana(data, metric = "euclidean")
+plot(dv)
+
+```
+
+```{r}
+hc <- hclust(dist(data, method = "euclidean"), method = "ward")
+hc
+plot(hc, hang = -0.01, cex = 0.8)
+fit <- cutree(hc, k=4)
+table(fit)
+
+rect.hclust(hc, k=4, border="red")
+```
+
+```{r}
+# no olvidar descomentar:
+# data$comuna = delitos$UNIDAD.TERRITORIAL
+# rownames(data) <- delitos$UNIDAD.TERRITORIAL
+
+km <- kmeans(data, 4)
+km
+
+aggregate(data, )
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
