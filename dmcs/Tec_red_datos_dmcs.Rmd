@@ -1,6 +1,6 @@
 ---
 title: "Tec_red_datos_dmcs"
-author: "Christian Castro"
+author: "Data Intelligence"
 date: "24-07-2020"
 output: html_document
 ---
@@ -136,10 +136,33 @@ library(ClusterR)
 ```
 # Validacion del clustering.
 
-1 
-2 validacion interna: indice de DAM
-3 
+1 Validación relativa.
+2 Validación interna: indice de DAM
+3 Validación externa.
+4 Validación de estabilidad.
 
+```{r}
+library(fpc)
+library(NbClust)
+library(caret)
+library(corrgram)
+# obtencion del numero optimo de clusters:
+delitos <- read.xlsx("C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_DS/dmcs1.xlsx", sheetIndex = 1, encoding = 'UTF-8', header = TRUE)
+
+ rownames(data) <-data$comuna
+ data$comuna<- NULL
+
+data <- as.data.frame(scale(delitos[,3:16]))
+corrgram(data, order=TRUE, lower.panel=panel.shade,
+  upper.panel=panel.pie, text.panel=panel.txt,
+  main="Car Milage Data in PC2/PC1 Order")
+# findCorrelation(data)
+
+# nb <- NbClust(data, distance = "euclidean", min.nc = 2, max.nc = 12, method = "ward.D2", index = "all")
+
+
+
+```
 
 
 
