@@ -23,7 +23,6 @@ library(readxl)
 library(xlsx)
 # la siguiente linea impide el despliegue de advertencias en forma local:
 options(warn = -1)
-
 library(tidyverse)
 library(gghighlight)
 library(magrittr)
@@ -33,43 +32,37 @@ library(ggdendro)
 library(rmarkdown)
 library(ggplot2)
 library(gganimate)
-theme_set(theme_bw()) 
+library(lubridate)
 
+theme_set(theme_bw()) 
 ```
 ```{r dos}
-
 # options("encoding" = "UTF-8")
 # covid19 <- read_xlsx("C:/Users/usuario/Desktop/covid9j.xlsx")
-
 ##########
 # El formato de la fecha en el excel esta en formato date
-covid19 <- read_xlsx("covid9j.xlsx")
-
-
+covid19 <- read_xlsx("C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_DS/data_madre_r0_panama_27_07_20_2.xlsx")
 ##########
-
-
-
 # covid19 <- read.csv("C:/Users/usuario/Desktop/covid_chile3.csv")
 # covid19 <- read_xlsx("C:/Users/usuario/Desktop/covid_chile3.xlsx")
-
 # corregimos el formato del dato fecha del excel:
 # covid19$Fecha <- excel_numeric_to_date(covid19$Fecha)
-
 # se declara un vector que almacene los valores de R0:
 R0_v <- c()
 comuna_v <- c()
 codigo_comuna_v <- c()
 region_v <- c()
 
+
+
+Fecha <- as.Date(covid19$Fecha, origin = "1899-12-30")
+
 # secuencia <- c()
-
-datos_covid19_providencia <-  covid19 %>% filter(Comuna == "Providencia")
-datos_covid19_providencia
-
-datos_covid19_providencia <- kable(datos_covid19_providencia) %>%
-  kable_styling(bootstrap_options = "striped", full_width = F)
-datos_covid19_providencia
+# datos_covid19_providencia <-  covid19 %>% filter(Comuna == "Providencia")
+# datos_covid19_providencia
+# datos_covid19_providencia <- kable(datos_covid19_providencia) %>%
+#   kable_styling(bootstrap_options = "striped", full_width = F)
+# datos_covid19_providencia
 ```
 
 
@@ -77,54 +70,40 @@ datos_covid19_providencia
 
 
 ```{r tres}  
-
 # extraemos los codigos de las comunas:
 # for(t in 1101:1101)
 # {
 #   secuencia = covid19$"Codigo comuna"
 # }
-
 #print(secuencia)
-
-
 # **********
-
 # secuencia = covid19$"Codigo comuna"
-
 #  print(secuencia)
 # extraemos los codigos solo una vez:
-
 # **********
- ux <- unique(covid19$"Codigo comuna")
-
+ ux <- unique(covid19$"CD_Corr")
 # ux <- 1107
-
  # print(ux)
-
-
-
-
 for(t in ux)
 {
       if(t != "No Informado")
       {
         # construimos una subtabla que contenga solo las filas determinadas por un 
         # codigo fijo:
-         comuna_en_cuestion = covid19[covid19$"Codigo comuna" == t,] 
+         comuna_en_cuestion = covid19[covid19$"CD_Corr" == t,] 
   #        
   # if(!is.null(comuna_en_cuestion))
   # {
-
         longitud = nrow(comuna_en_cuestion)
-        comuna <- comuna_en_cuestion$Comuna 
-        codigo_comuna <- comuna_en_cuestion$"Codigo comuna" 
-        region <- comuna_en_cuestion$Region
-        dia <- comuna_en_cuestion$"Día"
+        comuna <- comuna_en_cuestion$Corregimiento 
+        codigo_comuna <- comuna_en_cuestion$"CD_Corr" 
+       # region <- comuna_en_cuestion$Region
+        dia <- comuna_en_cuestion$"DIA"
         fecha <- comuna_en_cuestion$Fecha
         
         
         
-        if(nrow(comuna_en_cuestion) != 0 && (comuna_en_cuestion$Poblacion != 0 ))
+        if(nrow(comuna_en_cuestion) != 0 && (comuna_en_cuestion$"Población" != 0 ))
         {          
                 
                 # unique() devuelve un vector, un dataframe o una matriz como x,
@@ -133,7 +112,7 @@ for(t in ux)
                 
                 # Si la tabla excel contiene el dato de la poblacion constante
                 # para todas las fechas no es necesario:
-                population = as.numeric(comuna_en_cuestion$Poblacion)
+                population = as.numeric(comuna_en_cuestion$"Población")
                 
                 # Construimos una subtabla con dos columnas: 
                 # los datos de los casos diarios y la fecha:
@@ -145,11 +124,10 @@ for(t in ux)
                 # La tabla se crea con los datos de las columnas invertidos: 
                 # primero la fecha, luego los casos diarios:
                 infectados.por.dia = 
-                aggregate(comuna_en_cuestion$"Casos Diarios" ~ 
+                aggregate(comuna_en_cuestion$"Nuevos Confirmados" ~ 
                 comuna_en_cuestion$Fecha, FUN = sum)
-
                 fallecidos.por.dia = 
-                aggregate(comuna_en_cuestion$"Fallecidos Diarios" ~ 
+                aggregate(comuna_en_cuestion$"Nuevos Fallecidos" ~ 
                 comuna_en_cuestion$Fecha, FUN = sum)
                 
                 # sumamos a los infectados diarios los casos diarios y los fallecidos, 
@@ -158,7 +136,7 @@ for(t in ux)
                 infectados.por.dia[,2] + fallecidos.por.dia[,2]
                 
                 recuperados.por.dia = 
-                aggregate(comuna_en_cuestion$"Recuperados Diarios" ~
+                aggregate(comuna_en_cuestion$"Nuevos Recuperados" ~
                 comuna_en_cuestion$Fecha, FUN = sum)
                 
                 # Los susceptibles por dia no es un valor agregado. 
@@ -207,22 +185,21 @@ for(t in ux)
                 
                 
                  codigo_comuna_v        <- codigo_comuna
-        region_v  <- region
+       # region_v  <- region
         
         fecha_v <- fecha
         dia_v <- dia
-
                 
                 
         }
-
-        eee <- data.frame( comuna_v, R0_v, codigo_comuna_v,  region_v, fecha_v, dia_v)
+        # eee <- data.frame( comuna_v, R0_v, codigo_comuna_v,  region_v, fecha_v, dia_v)
+        
+                eee <- data.frame( comuna_v, R0_v, codigo_comuna_v,  fecha_v, dia_v, comuna_en_cuestion$"Nuevos Confirmados",comuna_en_cuestion$"Nuevos Fallecidos",comuna_en_cuestion$"Nuevos Recuperados",comuna_en_cuestion$"Población")
         
         # print (longitud)
         # print (comuna)
         # print (a)
         print(eee)
-
         
         
         # eee <- kable(eee) %>%
@@ -233,12 +210,12 @@ for(t in ux)
        # aca hay un problema pues por el cicli for se fuerza a escribir sobre una misma hoja y esto, no es permitido pues consta del mismo nombre. 
        # write.xlsx(eee, 'R0_en_Chile.xlsx')
         
-        write.table(eee,'R0_en_Chile.csv', col.names=F, append=T, sep = ",")
+        write.table(eee,'R0_panama_por_corr.csv', col.names=F, append=T, sep = ",")
                 
         R0_v <- c()
         comuna_v <- c()
         codigo_comuna_v <-  c()
-        region_v <-  c()
+     #   region_v <-  c()
 }
 }
 ```

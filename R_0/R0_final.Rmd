@@ -1,0 +1,181 @@
+---
+title: "R0 Alanje"
+author: "DataIntelligence"
+date: "22-06-2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE,
+                      warning = FALSE
+)
+```
+Version final del R0
+Se corrige erro cometido al no descontar de los susceptibles infectados y recuperados de forma permanente en cada t.
+```{r uno}
+library(knitr)
+library(kableExtra)
+library(janitor)
+library(dplyr)
+library(readxl)
+library(xlsx)
+# la siguiente linea impide el despliegue de advertencias en forma local:
+options(warn = -1)
+library(tidyverse)
+library(gghighlight)
+library(magrittr)
+library(readr)
+library(ape)
+library(ggdendro)
+library(rmarkdown)
+library(ggplot2)
+library(gganimate)
+library(lubridate)
+
+theme_set(theme_bw()) 
+```
+```{r dos}
+
+covid19 <-
+    read_xlsx(
+        "C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_DS/data_madre_r0_panama_27_07_20_2.xlsx"
+    )
+
+# covid19 <-  covid19 %>% filter(Corregimiento == "Alanje (Cabecera)")
+# covid19
+
+R0_v <- c()
+comuna_v <- c()
+codigo_comuna_v <- c()
+a <- 0
+s <- 0
+s_v <- c()
+y_bueno <- c()
+
+Fecha <- as.Date(covid19$Fecha, origin = "1899-12-30")
+
+```
+
+
+```{r tres}  
+
+ux <- unique(covid19$"CD_Corr")
+
+for(t in ux)
+{
+    
+    # susceptibles.por.dia2 <- 0
+    
+    
+    if (t != "No Informado")
+    {
+        comuna_en_cuestion = covid19[covid19$"CD_Corr" == t, ]
+        
+        longitud = nrow(comuna_en_cuestion)
+        comuna <- comuna_en_cuestion$Corregimiento
+        codigo_comuna <- comuna_en_cuestion$"CD_Corr"
+        dia <- comuna_en_cuestion$"DIA"
+        fecha <- comuna_en_cuestion$Fecha
+        
+        
+        if (nrow(comuna_en_cuestion) != 0 &&
+            (comuna_en_cuestion$"Población" != 0))
+        {
+            population = as.numeric(comuna_en_cuestion$"Población")
+            
+            infectados.por.dia =
+                aggregate(comuna_en_cuestion$"Nuevos Confirmados" ~
+                              comuna_en_cuestion$Fecha,
+                          FUN = sum)
+            
+            fallecidos.por.dia =
+                aggregate(comuna_en_cuestion$"Nuevos Fallecidos" ~
+                              comuna_en_cuestion$Fecha,
+                          FUN = sum)
+            
+            infectados.por.dia2 =
+                infectados.por.dia[, 2] + fallecidos.por.dia[, 2]
+            
+            recuperados.por.dia =
+                aggregate(comuna_en_cuestion$"Nuevos Recuperados" ~
+                              comuna_en_cuestion$Fecha,
+                          FUN = sum)
+            
+            # susceptibles.por.dia debe ir acumulando
+            
+            susceptibles.por.dia = population - infectados.por.dia2 - recuperados.por.dia[, 2]
+            
+            
+            # Creamos la tabla SIR:
+            tabla.comuna =
+                data.frame(
+                    unique(comuna_en_cuestion$Fecha),
+                    susceptibles.por.dia,
+                    infectados.por.dia2,
+                    recuperados.por.dia[, 2],
+                    population
+                )
+            
+            names(tabla.comuna) =
+                c("Fecha",
+                  "Susceptibles",
+                  "Infectados",
+                  "Recuperados",
+                  "Poblacion")
+            
+            x = tabla.comuna$Recuperados
+            y = population * log(tabla.comuna$Susceptibles)
+        }
+    }
+
+    # susceptibles.por.dia debe ir acumulando la resta de infectados
+    for (t in 1:nrow(comuna_en_cuestion))
+    {
+        s <<- s + tabla.comuna$Infectados[t] + tabla.comuna$Recuperados[t]
+        s_v[t] <- tabla.comuna$Poblacion - s
+        y_bueno[t] = population * log(s_v[t])
+    }
+
+    dataf = data.frame(s_v, tabla.comuna$Infectados,  y_bueno, tabla.comuna$Recuperados)
+    print(dataf)
+
+    m <- seq(2, longitud)
+    
+    for (i in m)
+    {
+        xx <- tabla.comuna$Recuperados[1:i]
+        yy <- y_bueno[1:i]
+        estimacion.R0 = -summary(lm(yy ~ xx))$coefficients[2]
+        R0_v[i] <- estimacion.R0
+        comuna_v <- comuna
+        codigo_comuna_v <- codigo_comuna
+        fecha_v <- fecha
+        dia_v <- dia
+    }
+    
+    eee <-
+        data.frame(comuna_v, R0_v, codigo_comuna_v,  fecha_v, dia_v, comuna_en_cuestion$"Nuevos Confirmados", comuna_en_cuestion$"Nuevos Fallecidos", comuna_en_cuestion$"Nuevos Recuperados", 
+ comuna_en_cuestion$"Población"                  )
+    print(eee)
+    
+    write.table(
+        eee,
+        'R0_panama_por_corr.csv',
+        col.names = F,
+        append = T,
+        sep = ","
+    )
+    
+    R0_v <- c()
+    comuna_v <- c()
+    codigo_comuna_v <-  c()
+    a <- 0
+    s <- 0
+    s_v <- c()
+    y_bueno <- c()
+}
+
+```
