@@ -1,5 +1,5 @@
 ---
-title: "R0 Alanje"
+title: "R0: leer un xlsx desde github"
 author: "DataIntelligence"
 date: "22-06-2020"
 output:
@@ -37,6 +37,14 @@ library(lubridate)
 
 theme_set(theme_bw()) 
 ```
+
+```{r}
+test <- rio::import('https://github.com/CerebralMastication/Presentations/raw/master/test.xlsx')
+test
+```
+
+
+
 ```{r dos}
 
  covid19 <-
