@@ -15,6 +15,8 @@ knitr::opts_chunk$set(echo = TRUE,
 ```
 Version final del R0
 Se corrige erro cometido al no descontar de los susceptibles infectados y recuperados de forma permanente en cada t.
+
+https://rpubs.com/chrimaho/GitHubAutomation
 ```{r uno}
 library(knitr)
 library(kableExtra)
@@ -34,27 +36,68 @@ library(rmarkdown)
 library(ggplot2)
 library(gganimate)
 library(lubridate)
-
+library("readxl")
+library(httr)
 theme_set(theme_bw()) 
 ```
 
 ```{r}
-test <- rio::import('https://github.com/CerebralMastication/Presentations/raw/master/test.xlsx')
-test
-```
 
+github_link <- "https://github.com/Sud-Austral/Datos_Panama/blob/master/datacovidpa/Localiza%20PN%20v1.xlsx?raw=true"
+temp_file <- tempfile(fileext = ".xlsx")
+req <- GET(github_link,
+          # autenticamos si lo necesitásemos con GITHUB_PAT:
+          # authenticate(Sys.getenv("GITHUB_PAT"), ""),
+          # escribimos los resultados en el disco:
+           write_disk(path = temp_file))
+itoR0 <- readxl::read_excel(temp_file, col_names = TRUE, sheet = "TODO CORREGIMIENTO")
+itoR0
+
+
+itoR0 <- itoR0[3:nrow(itoR0), c(4, 7, 9, 12, 14 ,16, 30)]
+names(itoR0)[1] <- "Codigo_corr"
+names(itoR0)[2] <- "Corregimiento"
+names(itoR0)[3] <- "Fecha"
+names(itoR0)[4] <- "Casos"
+names(itoR0)[5] <- "Fallecidos"
+names(itoR0)[6] <- "Recuperados"
+names(itoR0)[7] <- "Poblacion"
+itoR0
+# tab$Corregimiento
+
+itoR0$"Codigo_corr" <- as.numeric(itoR0$"Codigo_corr") 
+itoR0$"Fecha" <- as.numeric(itoR0$"Fecha") 
+itoR0$"Casos" <- as.numeric(itoR0$"Casos") 
+itoR0$"Casos"[is.na(itoR0$"Casos")] <- 0
+itoR0$"Fallecidos" <- as.numeric(itoR0$"Fallecidos") 
+itoR0$"Fallecidos"[is.na(itoR0$"Fallecidos")] <- 0
+itoR0$"Recuperados" <- as.numeric(itoR0$"Recuperados") 
+itoR0$"Recuperados"[is.na(itoR0$"Recuperados")] <- 0
+itoR0$"Poblacion" <- as.numeric(itoR0$"Poblacion") 
+itoR0
+
+```
 
 
 ```{r dos}
 
- covid19 <-
-  read_xlsx(
-       "C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_DS/data_madre_r0_panama_27_07_20_2.xlsx"
-   )
+# covid19 es itoR0
 
- covid19 <-  covid19 %>% filter(Corregimiento == "Cacique")
- covid19
+ # covid19 <-
+ #  read_xlsx(
+ #       "C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_DS/data_madre_r0_panama_27_07_20_2.xlsx"
+ #   )
+ # 
+ # covid19 <-  covid19 %>% filter(Corregimiento == "Cacique")
+ # 
+ # covid19
 
+
+comuna_en_cuestion <-  itoR0
+# comuna_en_cuestion <-  itoR0 %>% filter(Corregimiento == "Alanje (Cabecera)")
+
+
+ 
 R0_v <- c()
 comuna_v <- c()
 codigo_comuna_v <- c()
@@ -63,44 +106,41 @@ s <- 0
 s_v <- c()
 y_bueno <- c()
 
-Fecha <- as.Date(covid19$Fecha, origin = "1899-12-30")
+#Fecha <- as.Date(comuna_en_cuestion$Fecha, origin = "1899-12-30")
 
 ```
 
 
 ```{r tres}  
 
-ux <- unique(covid19$"CD_Corr")
+ux <- unique(comuna_en_cuestion$"Codigo_corr")
 
 for(t in ux)
 {
-    
-    # susceptibles.por.dia2 <- 0
-    
-    
+
     if (t != "No Informado")
     {
-        comuna_en_cuestion = covid19[covid19$"CD_Corr" == t, ]
+        comuna_en_cuestion = itoR0[itoR0$"Codigo_corr" == t, ]
         
         longitud = nrow(comuna_en_cuestion)
         comuna <- comuna_en_cuestion$Corregimiento
-        codigo_comuna <- comuna_en_cuestion$"CD_Corr"
+        codigo_comuna <- comuna_en_cuestion$"Codigo_corr"
         dia <- comuna_en_cuestion$"DIA"
         fecha <- comuna_en_cuestion$Fecha
         
         
         if (nrow(comuna_en_cuestion) != 0 &&
-            (comuna_en_cuestion$"Población" != 0))
+            (comuna_en_cuestion$"Poblacion" != 0))
         {
-            population = as.numeric(comuna_en_cuestion$"Población")
+            population = as.numeric(comuna_en_cuestion$"Poblacion")
             
             infectados.por.dia =
-                aggregate(comuna_en_cuestion$"Nuevos Confirmados" ~
+                aggregate(comuna_en_cuestion$"Casos" ~
                               comuna_en_cuestion$Fecha,
                           FUN = sum)
             
             fallecidos.por.dia =
-                aggregate(comuna_en_cuestion$"Nuevos Fallecidos" ~
+                aggregate(comuna_en_cuestion$"Fallecidos" ~
                               comuna_en_cuestion$Fecha,
                           FUN = sum)
             
@@ -108,7 +148,7 @@ for(t in ux)
                 infectados.por.dia[, 2] + fallecidos.por.dia[, 2]
             
             recuperados.por.dia =
-                aggregate(comuna_en_cuestion$"Nuevos Recuperados" ~
+                aggregate(comuna_en_cuestion$"Recuperados" ~
                               comuna_en_cuestion$Fecha,
                           FUN = sum)
             
@@ -136,9 +176,10 @@ for(t in ux)
             
             x = tabla.comuna$Recuperados
             y = population * log(tabla.comuna$Susceptibles)
+
         }
     }
-
+tabla.comuna
     # susceptibles.por.dia debe ir acumulando la resta de infectados
     for (t in 1:nrow(comuna_en_cuestion))
     {
@@ -164,10 +205,16 @@ for(t in ux)
         dia_v <- dia
     }
     
-    eee <-
-        data.frame(comuna_v, R0_v, codigo_comuna_v,  fecha_v, dia_v, comuna_en_cuestion$"Nuevos Confirmados", comuna_en_cuestion$"Nuevos Fallecidos", comuna_en_cuestion$"Nuevos Recuperados", 
- comuna_en_cuestion$"Población"                  )
+ #    eee <-
+ #        data.frame(comuna_v, R0_v, codigo_comuna_v,  fecha_v, dia_v, comuna_en_cuestion$"Casos", comuna_en_cuestion$"Fallecidos", comuna_en_cuestion$"Recuperados", 
+ # comuna_en_cuestion$"Poblacion"                  )
+ #    print(eee)
+    
+        eee <-
+        data.frame(comuna_v, R0_v)
     print(eee)
+    
+    
     
     write.table(
         eee,
