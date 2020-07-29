@@ -44,7 +44,7 @@ theme_set(theme_bw())
        "C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_DS/data_madre_r0_panama_27_07_20_2.xlsx"
    )
 
- covid19 <-  covid19 %>% filter(Corregimiento == "Cacique")
+ covid19 <-  covid19 %>% filter(Corregimiento == "Alanje (Cabecera)")
  covid19
 
 R0_v <- c()

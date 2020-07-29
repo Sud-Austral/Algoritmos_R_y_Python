@@ -51,6 +51,7 @@ req <- GET(github_link,
           # escribimos los resultados en el disco:
            write_disk(path = temp_file))
 itoR0 <- readxl::read_excel(temp_file, col_names = TRUE, sheet = "TODO CORREGIMIENTO")
+
 itoR0
 
 
@@ -74,28 +75,21 @@ itoR0$"Fallecidos"[is.na(itoR0$"Fallecidos")] <- 0
 itoR0$"Recuperados" <- as.numeric(itoR0$"Recuperados") 
 itoR0$"Recuperados"[is.na(itoR0$"Recuperados")] <- 0
 itoR0$"Poblacion" <- as.numeric(itoR0$"Poblacion") 
-itoR0
+
+itoR0 = itoR0[-1,]
+
+head(itoR0, 20)
 
 ```
 
 
 ```{r dos}
 
-# covid19 es itoR0
-
- # covid19 <-
- #  read_xlsx(
- #       "C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_DS/data_madre_r0_panama_27_07_20_2.xlsx"
- #   )
- # 
- # covid19 <-  covid19 %>% filter(Corregimiento == "Cacique")
- # 
- # covid19
 
 
-comuna_en_cuestion <-  itoR0
-# comuna_en_cuestion <-  itoR0 %>% filter(Corregimiento == "Alanje (Cabecera)")
-
+# comuna_en_cuestion <-  itoR0
+comuna_en_cuestion <-  itoR0 %>% filter(Corregimiento == "Alanje (Cabecera)")
+head(comuna_en_cuestion, 20)
 
  
 R0_v <- c()
@@ -166,13 +160,15 @@ for(t in ux)
                     recuperados.por.dia[, 2],
                     population
                 )
-            
+           # tabla.comuna = tabla.comuna[-1,]
             names(tabla.comuna) =
                 c("Fecha",
                   "Susceptibles",
                   "Infectados",
                   "Recuperados",
                   "Poblacion")
+            
+            
             
             x = tabla.comuna$Recuperados
             y = population * log(tabla.comuna$Susceptibles)
@@ -181,7 +177,7 @@ for(t in ux)
     }
 tabla.comuna
     # susceptibles.por.dia debe ir acumulando la resta de infectados
-    for (t in 1:nrow(comuna_en_cuestion))
+    for (t in 2:nrow(comuna_en_cuestion))
     {
         s <<- s + tabla.comuna$Infectados[t] + tabla.comuna$Recuperados[t]
         s_v[t] <- tabla.comuna$Poblacion - s

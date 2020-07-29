@@ -16,8 +16,8 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r cars}
-x <- c(2.6, 4.9)
-y<- c(3.9, 8.9)
+x <- c(0, 0, 0, 0 , 10 ,0 , 2, 0 , 27  )
+y<- c(19322.01 , 19322.01, 19322.01 , 19322.01 ,19279.65 ,19279.65  , 19266.39 , 19266.39  , 19168.33 )
 
 summary(lm(y ~ x))
 ```

@@ -373,8 +373,8 @@ summary {
 <h2>R Markdown</h2>
 <p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
 <p>When you click the <strong>Knit</strong> button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:</p>
-<pre class="r"><code>x &lt;- c(2.6, 4.9)
-y&lt;- c(3.9, 8.9)
+<pre class="r"><code>x &lt;- c(0, 0, 0, 0 , 10 ,0 , 2, 0 , 27  )
+y&lt;- c(19322.01 , 19322.01, 19322.01 , 19322.01 ,19279.65 ,19279.65  , 19266.39 , 19266.39  , 19168.33 )
 
 summary(lm(y ~ x))</code></pre>
 <pre><code>## 
@@ -382,16 +382,19 @@ summary(lm(y ~ x))</code></pre>
 ## lm(formula = y ~ x)
 ## 
 ## Residuals:
-## ALL 2 residuals are 0: no residual degrees of freedom!
+##    Min     1Q Median     3Q    Max 
+## -37.45 -24.19  18.17  18.17  23.53 
 ## 
 ## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)
-## (Intercept)   -1.752         NA      NA       NA
-## x              2.174         NA      NA       NA
+##              Estimate Std. Error  t value Pr(&gt;|t|)    
+## (Intercept) 19303.843      9.659 1998.556  &lt; 2e-16 ***
+## x              -4.773      1.004   -4.754  0.00207 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: NaN on 0 degrees of freedom
-## Multiple R-squared:      1,  Adjusted R-squared:    NaN 
-## F-statistic:   NaN on 1 and 0 DF,  p-value: NA</code></pre>
+## Residual standard error: 25.87 on 7 degrees of freedom
+## Multiple R-squared:  0.7635, Adjusted R-squared:  0.7297 
+## F-statistic:  22.6 on 1 and 7 DF,  p-value: 0.002074</code></pre>
 </div>
 <div id="including-plots" class="section level2">
 <h2>Including Plots</h2>
