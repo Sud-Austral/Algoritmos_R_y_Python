@@ -369,7 +369,7 @@ summary {
 </div>
 
 
-<p>Version final del R0 Se corrige erro cometido al no descontar de los susceptibles infectados y recuperados de forma permanente en cada t.</p>
+<p>Version final del R0 Se corrige error cometido al no descontar de los susceptibles infectados y recuperados de forma permanente en cada t.</p>
 <pre class="r"><code>library(knitr)
 library(kableExtra)
 library(janitor)
@@ -390,13 +390,193 @@ library(gganimate)
 library(lubridate)
 
 theme_set(theme_bw()) </code></pre>
+<pre class="r"><code>library(rio)
+
+
+
+link =&#39;https://github.com/Sud-Austral/Datos_Panama/blob/master/datacovidpa/Localiza%20PN%20v1.xlsx?raw=true&#39;
+data = rio::import(link)
+head(data,10)</code></pre>
+<pre><code>##       ...1                ...2              ...3                 ...4
+## 1     &lt;NA&gt;                &lt;NA&gt;              &lt;NA&gt;                 &lt;NA&gt;
+## 2  CD_Corr           Provincia          Distrito        Corregimiento
+## 3    80821              Panamá            Panamá      24 de Diciembre
+## 4    30202               Colón           Chagres              Achiote
+## 5    70313          Los Santos        Los Santos           Agua Buena
+## 6   120502 Comarca Ngäbe Buglé             Ñürün        Agua de Salud
+## 7    50313              Darién          Santa Fe            Agua Fría
+## 8    20101               Coclé         Aguadulce Aguadulce (Cabecera)
+## 9   100102   Comarca Kuna Yala Comarca Kuna Yala            Ailigandí
+## 10   40101            Chiriquí            Alanje    Alanje (Cabecera)
+##          ...5 43900 43901 43902 43903 43904 43905 43906 43907 43908 43909 43910
+## 1           0     0     0     0     0     0     0     0     0     0     0     0
+## 2  SUM Correg 43900 43901 43902 43903 43904 43905 43906 43907 43908 43909 43910
+## 3       76450  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 4          53  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 5           0  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 6          25  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 7         495  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 8        2776  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 9        8120  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 10       2706  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+##    43911 43912 43913 43914 43915 43916 43917 43918 43919 43920 43921 43922
+## 1      0     0     0     0     0     0     0     0     0     0     0     0
+## 2  43911 43912 43913 43914 43915 43916 43917 43918 43919 43920 43921 43922
+## 3   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 4   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 5   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 6   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 7   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 8   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 9   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 10  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+##    43923 43924 43925 43926 43927 43928 43929 43930 43931 43932 43933 43934
+## 1      0     0     0     0     0     0     0     0     0     0     0     0
+## 2  43923 43924 43925 43926 43927 43928 43929 43930 43931 43932 43933 43934
+## 3   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 4   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 5   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 6   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 7   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 8   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 9   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 10  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+##    43935 43936 43937 43938 43939 43940 43941 43942 43943 43944 43945 43946
+## 1      0     0     0     0     0     0     0     0     0     0     0     0
+## 2  43935 43936 43937 43938 43939 43940 43941 43942 43943 43944 43945 43946
+## 3   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 4   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 5   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 6   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 7   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 8   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 9   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 10  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+##    43947 43948 43949 43950 43951 43952 43953 43954 43955 43956 43957 43958
+## 1      0     0     0     0     0     0     0     0     0     0     0     0
+## 2  43947 43948 43949 43950 43951 43952 43953 43954 43955 43956 43957 43958
+## 3   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 4   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 5   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 6   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 7   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 8   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 9   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 10  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+##    43959 43960 43961 43962 43963 43964 43965 43966 43967 43968 43969 43970
+## 1      0     0     0     0     0     0     0     0     0     0     0     0
+## 2  43959 43960 43961 43962 43963 43964 43965 43966 43967 43968 43969 43970
+## 3   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 4   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 5   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 6   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 7   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 8   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 9   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 10  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+##    43971 43972 43973 43974 43975 43976 43977 43978 43979 43980 43981 43982
+## 1      0     0     0     0     0     0     0     0     0     0     0     0
+## 2  43971 43972 43973 43974 43975 43976 43977 43978 43979 43980 43981 43982
+## 3   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 4   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 5   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 6   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 7   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 8   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 9   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 10  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+##    43983 43984 43985 43986 43987 43988 43989 43990 43991 43992 43993 43994
+## 1      0     0     0     0 15469 15469 15469 15469 17208 17208 18562 18562
+## 2  43983 43984 43985 43986 43987 43988 43989 43990 43991 43992 43993 43994
+## 3   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   574   574   574   574   627   627   665   665
+## 4   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 5   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 6   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 7   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;     1     1     1     1     1     1     1     1
+## 8   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;    17    17    17    17    17    17    18    18
+## 9   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;   101   101   101   101   102   102   102   102
+## 10  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;     8     8     9     9     9     9     9     9
+##    43995 43996 43997 43998 43999 44000 44001 44002 44003 44004 44005 44006
+## 1  20028 20673 21416 21957 21957 23374 24235 25237 26045 26770 26770 28001
+## 2  43995 43996 43997 43998 43999 44000 44001 44002 44003 44004 44005 44006
+## 3    727   750   771   788   788   856   887   919   952   978   978  1007
+## 4   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 5   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 6   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 7      1     1     2     2     2     3     3     4     4     4     4     4
+## 8     18    18    21    21    21    21    21    21    23    25    25    25
+## 9    102   102   102   102   102   102   102   102   102   102   102   102
+## 10     9    10    10    11    11    20    22    24    25    26    26    28
+##    44007 44008 44009 44010 44011 44012 44013 44014 44015 44016 44017 44018
+## 1  28936 28936 28936 31651 31651 31651 34454 35210 35944 35944 38096 39294
+## 2  44007 44008 44009 44010 44011 44012 44013 44014 44015 44016 44017 44018
+## 3   1040  1040  1040  1130  1130  1130  1231  1256  1278  1278  1353  1392
+## 4   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;     1
+## 5   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 6   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;    25  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 7      5     5     5     5     5     5  &lt;NA&gt;     8     9     9    10    10
+## 8     27    27    27    30    30    30    47    34    48    48    37    41
+## 9    102   102   102   101   101   101   101   101   101   101   101   101
+## 10    28    28    28    33    33    33    33    33    33    33    35    36
+##    44019 44020 44021 44022 44023 44024 44025 44026 44027 44028 44029 44030
+## 1  40252 40252 40252 40252 40252 40252 40252 40252 40252 50305 51373 52231
+## 2  44019 44020 44021 44022 44023 44024 44025 44026 44027 44028 44029 44030
+## 3   1418  1418  1418  1418  1418  1418  1418  1418  1418  1119  1144  1152
+## 4      1     1     1     1     1     1     1     1     1     1     1     1
+## 5   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 6   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 7     10    10    10    10    10    10    10    10    10    13    13    13
+## 8     41    41    41    41    41    41    41    41    41    70    71    74
+## 9    101   101   101   101   101   101   101   101   101   101   101   102
+## 10    35    35    35    35    35    35    35    35    35    54    58    59
+##    44031 44032 44033 44034 44035 44036 44037 44038 44039 44040 44041 44042
+## 1  53448 54422 55098 55098 56622 57843 57843 60129 61271 62034 63169 64097
+## 2  44031 44032 44033 44034 44035 44036 44037 44038 44039 44040 44041 44042
+## 3   1177  1207  1220  1220  1240  1260  1260  1316  1328  2051  2076  2100
+## 4      1     1     1     1     1     1     1     3     3     3     3     3
+## 5   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 6   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 7     13    13    13    13    14    14    14    14    14    14    14    14
+## 8     75    77    78    78    80    82    82    83    85    68    68    69
+## 9    102   102   132   132   160   161   161   211   216   221   225   248
+## 10    61    61    66    66    76    82    82    87    87    88    91    91
+##    44043 44044 44045 44046 44047 44048
+## 1  65141 66269 67314 68304 69339 69994
+## 2  44043 44044 44045 44046 44047 44048
+## 3   2121  2160  2199  2235  2254  2270
+## 4      3     3     3     3     3     3
+## 5   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 6   &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 7     14    14    14    14    14    14
+## 8     72    73    73    73    76    76
+## 9    249   260   260   268   272   276
+## 10    96    98    98   103   105   104</code></pre>
+<pre class="r"><code>colnames(data)</code></pre>
+<pre><code>##   [1] &quot;...1&quot;  &quot;...2&quot;  &quot;...3&quot;  &quot;...4&quot;  &quot;...5&quot;  &quot;43900&quot; &quot;43901&quot; &quot;43902&quot; &quot;43903&quot;
+##  [10] &quot;43904&quot; &quot;43905&quot; &quot;43906&quot; &quot;43907&quot; &quot;43908&quot; &quot;43909&quot; &quot;43910&quot; &quot;43911&quot; &quot;43912&quot;
+##  [19] &quot;43913&quot; &quot;43914&quot; &quot;43915&quot; &quot;43916&quot; &quot;43917&quot; &quot;43918&quot; &quot;43919&quot; &quot;43920&quot; &quot;43921&quot;
+##  [28] &quot;43922&quot; &quot;43923&quot; &quot;43924&quot; &quot;43925&quot; &quot;43926&quot; &quot;43927&quot; &quot;43928&quot; &quot;43929&quot; &quot;43930&quot;
+##  [37] &quot;43931&quot; &quot;43932&quot; &quot;43933&quot; &quot;43934&quot; &quot;43935&quot; &quot;43936&quot; &quot;43937&quot; &quot;43938&quot; &quot;43939&quot;
+##  [46] &quot;43940&quot; &quot;43941&quot; &quot;43942&quot; &quot;43943&quot; &quot;43944&quot; &quot;43945&quot; &quot;43946&quot; &quot;43947&quot; &quot;43948&quot;
+##  [55] &quot;43949&quot; &quot;43950&quot; &quot;43951&quot; &quot;43952&quot; &quot;43953&quot; &quot;43954&quot; &quot;43955&quot; &quot;43956&quot; &quot;43957&quot;
+##  [64] &quot;43958&quot; &quot;43959&quot; &quot;43960&quot; &quot;43961&quot; &quot;43962&quot; &quot;43963&quot; &quot;43964&quot; &quot;43965&quot; &quot;43966&quot;
+##  [73] &quot;43967&quot; &quot;43968&quot; &quot;43969&quot; &quot;43970&quot; &quot;43971&quot; &quot;43972&quot; &quot;43973&quot; &quot;43974&quot; &quot;43975&quot;
+##  [82] &quot;43976&quot; &quot;43977&quot; &quot;43978&quot; &quot;43979&quot; &quot;43980&quot; &quot;43981&quot; &quot;43982&quot; &quot;43983&quot; &quot;43984&quot;
+##  [91] &quot;43985&quot; &quot;43986&quot; &quot;43987&quot; &quot;43988&quot; &quot;43989&quot; &quot;43990&quot; &quot;43991&quot; &quot;43992&quot; &quot;43993&quot;
+## [100] &quot;43994&quot; &quot;43995&quot; &quot;43996&quot; &quot;43997&quot; &quot;43998&quot; &quot;43999&quot; &quot;44000&quot; &quot;44001&quot; &quot;44002&quot;
+## [109] &quot;44003&quot; &quot;44004&quot; &quot;44005&quot; &quot;44006&quot; &quot;44007&quot; &quot;44008&quot; &quot;44009&quot; &quot;44010&quot; &quot;44011&quot;
+## [118] &quot;44012&quot; &quot;44013&quot; &quot;44014&quot; &quot;44015&quot; &quot;44016&quot; &quot;44017&quot; &quot;44018&quot; &quot;44019&quot; &quot;44020&quot;
+## [127] &quot;44021&quot; &quot;44022&quot; &quot;44023&quot; &quot;44024&quot; &quot;44025&quot; &quot;44026&quot; &quot;44027&quot; &quot;44028&quot; &quot;44029&quot;
+## [136] &quot;44030&quot; &quot;44031&quot; &quot;44032&quot; &quot;44033&quot; &quot;44034&quot; &quot;44035&quot; &quot;44036&quot; &quot;44037&quot; &quot;44038&quot;
+## [145] &quot;44039&quot; &quot;44040&quot; &quot;44041&quot; &quot;44042&quot; &quot;44043&quot; &quot;44044&quot; &quot;44045&quot; &quot;44046&quot; &quot;44047&quot;
+## [154] &quot;44048&quot;</code></pre>
 <pre class="r"><code> covid19 &lt;-
   read_xlsx(
        &quot;C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_DS/data_madre_r0_panama_27_07_20_2.xlsx&quot;
    )
 
- covid19 &lt;-  covid19 %&gt;% filter(Corregimiento == &quot;Alanje (Cabecera)&quot;)
- covid19</code></pre>
+  covid19 &lt;-  covid19 %&gt;% filter(Corregimiento == &quot;Alanje (Cabecera)&quot;)
+  covid19</code></pre>
 <pre><code>## # A tibble: 104 x 31
 ##    ON    Ultimo Indice CD_Corr Provincia Distrito Corregimiento CD_Prov Fecha
 ##    &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;    &lt;chr&gt;           &lt;dbl&gt; &lt;dbl&gt;

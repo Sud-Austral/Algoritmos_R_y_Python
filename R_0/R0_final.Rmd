@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE,
 )
 ```
 Version final del R0
-Se corrige erro cometido al no descontar de los susceptibles infectados y recuperados de forma permanente en cada t.
+Se corrige error cometido al no descontar de los susceptibles infectados y recuperados de forma permanente en cada t.
 ```{r uno}
 library(knitr)
 library(kableExtra)
@@ -39,13 +39,23 @@ theme_set(theme_bw())
 ```
 ```{r dos}
 
+library(rio)
+
+
+
+link ='https://github.com/Sud-Austral/Datos_Panama/blob/master/datacovidpa/Localiza%20PN%20v1.xlsx?raw=true'
+data = rio::import(link)
+head(data,10)
+
+colnames(data)
+
  covid19 <-
   read_xlsx(
        "C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_DS/data_madre_r0_panama_27_07_20_2.xlsx"
    )
 
- covid19 <-  covid19 %>% filter(Corregimiento == "Alanje (Cabecera)")
- covid19
+  covid19 <-  covid19 %>% filter(Corregimiento == "Alanje (Cabecera)")
+  covid19
 
 R0_v <- c()
 comuna_v <- c()
