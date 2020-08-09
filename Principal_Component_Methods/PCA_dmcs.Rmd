@@ -16,19 +16,38 @@ library("openxlsx")
 library(httr)
 library(xlsx)
 library(readr)
+options(warn=-1)
 ```
 
-## R Markdown
+## Análisis de la delincuencia en Chile
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r}
 
-url1 <- "https://github.com/Sud-Austral/Bases_de_Datos_DS/blob/master/DMCS/Frec_CASOS_POLICIALES_ANUAL_2001_2016w-2.xls?raw=true"
+url1 <- "https://github.com/Sud-Austral/Bases_de_Datos_DS/blob/master/DMCS/Tasa_casos_dmcs_mensual_2001_2017w.xlsx?raw=true"
 p1f <- tempfile()
 download.file(url1, p1f, mode = "wb")
-p1 <- read_excel(path = p1f, sheet = 1)
-p1
+p1 <- read_excel(path = p1f, sheet = 2)
+
+p2 = p1[-c(1, 2),]
+names(p2) <- p2[1,]
+p2 <- p2[-1,]
+p3 <- p2[p2$UN_ADMIN == "COMUNA", ]
+myvars <- c("UNIDAD TERRITORIAL", "38353")
+newdata <- p3[myvars]
+vio <- as.numeric(as.matrix(newdata)[,2])
+
+summary(vio)
 ```
+
+
+
+
+
+
+
+
+
+
+

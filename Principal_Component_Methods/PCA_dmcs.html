@@ -369,14 +369,12 @@ summary {
 </div>
 
 
-<div id="r-markdown" class="section level2">
-<h2>R Markdown</h2>
-<p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
-<p>When you click the <strong>Knit</strong> button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:</p>
-<pre class="r"><code>url1 &lt;- &quot;https://github.com/Sud-Austral/Bases_de_Datos_DS/blob/master/DMCS/Frec_CASOS_POLICIALES_ANUAL_2001_2016w-2.xls?raw=true&quot;
+<div id="análisis-de-la-delincuencia-en-chile" class="section level2">
+<h2>Análisis de la delincuencia en Chile</h2>
+<pre class="r"><code>url1 &lt;- &quot;https://github.com/Sud-Austral/Bases_de_Datos_DS/blob/master/DMCS/Tasa_casos_dmcs_mensual_2001_2017w.xlsx?raw=true&quot;
 p1f &lt;- tempfile()
 download.file(url1, p1f, mode = &quot;wb&quot;)
-p1 &lt;- read_excel(path = p1f, sheet = 1)</code></pre>
+p1 &lt;- read_excel(path = p1f, sheet = 2)</code></pre>
 <pre><code>## New names:
 ## * `` -&gt; ...2
 ## * `` -&gt; ...3
@@ -385,21 +383,171 @@ p1 &lt;- read_excel(path = p1f, sheet = 1)</code></pre>
 ## * `` -&gt; ...6
 ## * ...</code></pre>
 <pre class="r"><code>p1</code></pre>
-<pre><code>## # A tibble: 420 x 17
-##    `FRECUENCIA DE ~ ...2  ...3  ...4    ...5   ...6   ...7   ...8   ...9  ...10
-##    &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-##  1 SEGÚN UNIDAD TE~ &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;      NA     NA     NA     NA     NA     NA
-##  2 &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;      NA     NA     NA     NA     NA     NA
-##  3 ORDEN            UN_A~ REGI~ UNID~   2005   2006   2007   2008   2009   2010
-##  4 1                REGI~ 99    PAÍS  500574 505317 551866 569747 616372 597987
-##  5 2                REGI~ 15    Regi~   4976   5287   4961   5461   6287   6532
-##  6 3                PROV~ 15    Prov~   4937   5242   4928   5421   6252   6494
-##  7 4                COMU~ 15    Arica   4934   5240   4927   5412   6238   6467
-##  8 5                COMU~ 15    Cama~      3      2      1      9     14     27
-##  9 6                PROV~ 15    Prov~     39     45     33     40     35     38
-## 10 7                COMU~ 15    Putre     32     40     31     32     26     30
-## # ... with 410 more rows, and 7 more variables: ...11 &lt;dbl&gt;, ...12 &lt;dbl&gt;,
-## #   ...13 &lt;dbl&gt;, ...14 &lt;dbl&gt;, ...15 &lt;dbl&gt;, ...16 &lt;dbl&gt;, ...17 &lt;chr&gt;</code></pre>
+<pre><code>## # A tibble: 419 x 154
+##    `TASA DE CASOS ~ ...2  ...3  ...4  ...5  ...6  ...7  ...8  ...9  ...10
+##    &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 SEGÚN UNIDAD TE~ &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+##  2 &lt;NA&gt;             &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt; 
+##  3 ORDEN            UN_A~ REGI~ UNID~ 38353 38384 38412 38443 38473 38504
+##  4 1                REGI~ 99    PAÍS  26.2~ 25.9~ 29.1~ 27.5~ 27.3~ 27.3~
+##  5 2                REGI~ 1     Regi~ 23.0~ 16.2~ 14.6~ 18.3~ 10.4~ 12.0~
+##  6 3                PROV~ 1     Prov~ 23.3~ 16.4~ 14.8~ 18.6~ 10.6~ 12.2~
+##  7 4                COMU~ 1     Arica 23.5~ 16.5~ 14.9~ 18.7~ 10.7~ 12.3~
+##  8 5                COMU~ 1     Cama~ 0     0     0     0     0     0    
+##  9 6                PROV~ 1     Prov~ 0     0     0     0     0     0    
+## 10 7                COMU~ 1     Putre 0     0     0     0     0     0    
+## # ... with 409 more rows, and 144 more variables: ...11 &lt;dbl&gt;, ...12 &lt;dbl&gt;,
+## #   ...13 &lt;dbl&gt;, ...14 &lt;dbl&gt;, ...15 &lt;dbl&gt;, ...16 &lt;dbl&gt;, ...17 &lt;dbl&gt;,
+## #   ...18 &lt;dbl&gt;, ...19 &lt;dbl&gt;, ...20 &lt;dbl&gt;, ...21 &lt;dbl&gt;, ...22 &lt;dbl&gt;,
+## #   ...23 &lt;dbl&gt;, ...24 &lt;dbl&gt;, ...25 &lt;dbl&gt;, ...26 &lt;dbl&gt;, ...27 &lt;dbl&gt;,
+## #   ...28 &lt;dbl&gt;, ...29 &lt;dbl&gt;, ...30 &lt;dbl&gt;, ...31 &lt;dbl&gt;, ...32 &lt;dbl&gt;,
+## #   ...33 &lt;dbl&gt;, ...34 &lt;dbl&gt;, ...35 &lt;dbl&gt;, ...36 &lt;dbl&gt;, ...37 &lt;dbl&gt;,
+## #   ...38 &lt;dbl&gt;, ...39 &lt;dbl&gt;, ...40 &lt;dbl&gt;, ...41 &lt;dbl&gt;, ...42 &lt;dbl&gt;,
+## #   ...43 &lt;dbl&gt;, ...44 &lt;dbl&gt;, ...45 &lt;dbl&gt;, ...46 &lt;dbl&gt;, ...47 &lt;dbl&gt;,
+## #   ...48 &lt;dbl&gt;, ...49 &lt;dbl&gt;, ...50 &lt;dbl&gt;, ...51 &lt;dbl&gt;, ...52 &lt;dbl&gt;,
+## #   ...53 &lt;dbl&gt;, ...54 &lt;dbl&gt;, ...55 &lt;dbl&gt;, ...56 &lt;dbl&gt;, ...57 &lt;dbl&gt;,
+## #   ...58 &lt;dbl&gt;, ...59 &lt;dbl&gt;, ...60 &lt;dbl&gt;, ...61 &lt;dbl&gt;, ...62 &lt;dbl&gt;,
+## #   ...63 &lt;dbl&gt;, ...64 &lt;dbl&gt;, ...65 &lt;dbl&gt;, ...66 &lt;dbl&gt;, ...67 &lt;dbl&gt;,
+## #   ...68 &lt;dbl&gt;, ...69 &lt;dbl&gt;, ...70 &lt;dbl&gt;, ...71 &lt;dbl&gt;, ...72 &lt;dbl&gt;,
+## #   ...73 &lt;dbl&gt;, ...74 &lt;dbl&gt;, ...75 &lt;dbl&gt;, ...76 &lt;dbl&gt;, ...77 &lt;dbl&gt;,
+## #   ...78 &lt;dbl&gt;, ...79 &lt;dbl&gt;, ...80 &lt;dbl&gt;, ...81 &lt;dbl&gt;, ...82 &lt;dbl&gt;,
+## #   ...83 &lt;dbl&gt;, ...84 &lt;dbl&gt;, ...85 &lt;dbl&gt;, ...86 &lt;dbl&gt;, ...87 &lt;dbl&gt;,
+## #   ...88 &lt;dbl&gt;, ...89 &lt;dbl&gt;, ...90 &lt;dbl&gt;, ...91 &lt;dbl&gt;, ...92 &lt;dbl&gt;,
+## #   ...93 &lt;dbl&gt;, ...94 &lt;dbl&gt;, ...95 &lt;dbl&gt;, ...96 &lt;dbl&gt;, ...97 &lt;dbl&gt;,
+## #   ...98 &lt;dbl&gt;, ...99 &lt;dbl&gt;, ...100 &lt;dbl&gt;, ...101 &lt;dbl&gt;, ...102 &lt;dbl&gt;,
+## #   ...103 &lt;dbl&gt;, ...104 &lt;dbl&gt;, ...105 &lt;dbl&gt;, ...106 &lt;dbl&gt;, ...107 &lt;dbl&gt;,
+## #   ...108 &lt;dbl&gt;, ...109 &lt;dbl&gt;, ...110 &lt;dbl&gt;, ...</code></pre>
+<pre class="r"><code>p2 = p1[-c(1, 2),]
+p2</code></pre>
+<pre><code>## # A tibble: 417 x 154
+##    `TASA DE CASOS ~ ...2  ...3  ...4  ...5  ...6  ...7  ...8  ...9  ...10  ...11
+##    &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;
+##  1 ORDEN            UN_A~ REGI~ UNID~ 38353 38384 38412 38443 38473 38504 3.85e4
+##  2 1                REGI~ 99    PAÍS  26.2~ 25.9~ 29.1~ 27.5~ 27.3~ 27.3~ 2.94e1
+##  3 2                REGI~ 1     Regi~ 23.0~ 16.2~ 14.6~ 18.3~ 10.4~ 12.0~ 1.36e1
+##  4 3                PROV~ 1     Prov~ 23.3~ 16.4~ 14.8~ 18.6~ 10.6~ 12.2~ 1.38e1
+##  5 4                COMU~ 1     Arica 23.5~ 16.5~ 14.9~ 18.7~ 10.7~ 12.3~ 1.39e1
+##  6 5                COMU~ 1     Cama~ 0     0     0     0     0     0     0.    
+##  7 6                PROV~ 1     Prov~ 0     0     0     0     0     0     0.    
+##  8 7                COMU~ 1     Putre 0     0     0     0     0     0     0.    
+##  9 8                COMU~ 1     Gene~ 0     0     0     0     0     0     0.    
+## 10 9                REGI~ 15    Regi~ 28.9~ 23.8~ 26.3~ 32.7~ 22.6~ 22.2~ 2.79e1
+## # ... with 407 more rows, and 143 more variables: ...12 &lt;dbl&gt;, ...13 &lt;dbl&gt;,
+## #   ...14 &lt;dbl&gt;, ...15 &lt;dbl&gt;, ...16 &lt;dbl&gt;, ...17 &lt;dbl&gt;, ...18 &lt;dbl&gt;,
+## #   ...19 &lt;dbl&gt;, ...20 &lt;dbl&gt;, ...21 &lt;dbl&gt;, ...22 &lt;dbl&gt;, ...23 &lt;dbl&gt;,
+## #   ...24 &lt;dbl&gt;, ...25 &lt;dbl&gt;, ...26 &lt;dbl&gt;, ...27 &lt;dbl&gt;, ...28 &lt;dbl&gt;,
+## #   ...29 &lt;dbl&gt;, ...30 &lt;dbl&gt;, ...31 &lt;dbl&gt;, ...32 &lt;dbl&gt;, ...33 &lt;dbl&gt;,
+## #   ...34 &lt;dbl&gt;, ...35 &lt;dbl&gt;, ...36 &lt;dbl&gt;, ...37 &lt;dbl&gt;, ...38 &lt;dbl&gt;,
+## #   ...39 &lt;dbl&gt;, ...40 &lt;dbl&gt;, ...41 &lt;dbl&gt;, ...42 &lt;dbl&gt;, ...43 &lt;dbl&gt;,
+## #   ...44 &lt;dbl&gt;, ...45 &lt;dbl&gt;, ...46 &lt;dbl&gt;, ...47 &lt;dbl&gt;, ...48 &lt;dbl&gt;,
+## #   ...49 &lt;dbl&gt;, ...50 &lt;dbl&gt;, ...51 &lt;dbl&gt;, ...52 &lt;dbl&gt;, ...53 &lt;dbl&gt;,
+## #   ...54 &lt;dbl&gt;, ...55 &lt;dbl&gt;, ...56 &lt;dbl&gt;, ...57 &lt;dbl&gt;, ...58 &lt;dbl&gt;,
+## #   ...59 &lt;dbl&gt;, ...60 &lt;dbl&gt;, ...61 &lt;dbl&gt;, ...62 &lt;dbl&gt;, ...63 &lt;dbl&gt;,
+## #   ...64 &lt;dbl&gt;, ...65 &lt;dbl&gt;, ...66 &lt;dbl&gt;, ...67 &lt;dbl&gt;, ...68 &lt;dbl&gt;,
+## #   ...69 &lt;dbl&gt;, ...70 &lt;dbl&gt;, ...71 &lt;dbl&gt;, ...72 &lt;dbl&gt;, ...73 &lt;dbl&gt;,
+## #   ...74 &lt;dbl&gt;, ...75 &lt;dbl&gt;, ...76 &lt;dbl&gt;, ...77 &lt;dbl&gt;, ...78 &lt;dbl&gt;,
+## #   ...79 &lt;dbl&gt;, ...80 &lt;dbl&gt;, ...81 &lt;dbl&gt;, ...82 &lt;dbl&gt;, ...83 &lt;dbl&gt;,
+## #   ...84 &lt;dbl&gt;, ...85 &lt;dbl&gt;, ...86 &lt;dbl&gt;, ...87 &lt;dbl&gt;, ...88 &lt;dbl&gt;,
+## #   ...89 &lt;dbl&gt;, ...90 &lt;dbl&gt;, ...91 &lt;dbl&gt;, ...92 &lt;dbl&gt;, ...93 &lt;dbl&gt;,
+## #   ...94 &lt;dbl&gt;, ...95 &lt;dbl&gt;, ...96 &lt;dbl&gt;, ...97 &lt;dbl&gt;, ...98 &lt;dbl&gt;,
+## #   ...99 &lt;dbl&gt;, ...100 &lt;dbl&gt;, ...101 &lt;dbl&gt;, ...102 &lt;dbl&gt;, ...103 &lt;dbl&gt;,
+## #   ...104 &lt;dbl&gt;, ...105 &lt;dbl&gt;, ...106 &lt;dbl&gt;, ...107 &lt;dbl&gt;, ...108 &lt;dbl&gt;,
+## #   ...109 &lt;dbl&gt;, ...110 &lt;dbl&gt;, ...111 &lt;dbl&gt;, ...</code></pre>
+<pre class="r"><code>names(p2) &lt;- p2[1,]
+p2 &lt;- p2[-1,]
+p2</code></pre>
+<pre><code>## # A tibble: 416 x 154
+##    ORDEN UN_ADMIN REGION `UNIDAD TERRITO~ `38353` `38384` `38412` `38443`
+##    &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  
+##  1 1     REGION   99     PAÍS             26.242~ 25.916~ 29.112~ 27.533~
+##  2 2     REGION   1      Región de Arica~ 23.025~ 16.226~ 14.659~ 18.327~
+##  3 3     PROVINC~ 1      Provincia de Ar~ 23.377~ 16.473~ 14.882~ 18.606~
+##  4 4     COMUNA   1      Arica            23.553~ 16.597~ 14.994~ 18.747~
+##  5 5     COMUNA   1      Camarones        0       0       0       0      
+##  6 6     PROVINC~ 1      Provincia de Pa~ 0       0       0       0      
+##  7 7     COMUNA   1      Putre            0       0       0       0      
+##  8 8     COMUNA   1      General Lagos    0       0       0       0      
+##  9 9     REGION   15     Región de Tarap~ 28.997~ 23.873~ 26.351~ 32.782~
+## 10 10    PROVINC~ 15     Provincia de Iq~ 31.628~ 25.903~ 28.683~ 35.889~
+## # ... with 406 more rows, and 146 more variables: `38473` &lt;chr&gt;, `38504` &lt;chr&gt;,
+## #   `38534` &lt;dbl&gt;, `38565` &lt;dbl&gt;, `38596` &lt;dbl&gt;, `38626` &lt;dbl&gt;, `38657` &lt;dbl&gt;,
+## #   `38687` &lt;dbl&gt;, `38718` &lt;dbl&gt;, `38749` &lt;dbl&gt;, `38777` &lt;dbl&gt;, `38808` &lt;dbl&gt;,
+## #   `38838` &lt;dbl&gt;, `38869` &lt;dbl&gt;, `38899` &lt;dbl&gt;, `38930` &lt;dbl&gt;, `38961` &lt;dbl&gt;,
+## #   `38991` &lt;dbl&gt;, `39022` &lt;dbl&gt;, `39052` &lt;dbl&gt;, `39083` &lt;dbl&gt;, `39114` &lt;dbl&gt;,
+## #   `39142` &lt;dbl&gt;, `39173` &lt;dbl&gt;, `39203` &lt;dbl&gt;, `39234` &lt;dbl&gt;, `39264` &lt;dbl&gt;,
+## #   `39295` &lt;dbl&gt;, `39326` &lt;dbl&gt;, `39356` &lt;dbl&gt;, `39387` &lt;dbl&gt;, `39417` &lt;dbl&gt;,
+## #   `39448` &lt;dbl&gt;, `39479` &lt;dbl&gt;, `39508` &lt;dbl&gt;, `39539` &lt;dbl&gt;, `39569` &lt;dbl&gt;,
+## #   `39600` &lt;dbl&gt;, `39630` &lt;dbl&gt;, `39661` &lt;dbl&gt;, `39692` &lt;dbl&gt;, `39722` &lt;dbl&gt;,
+## #   `39753` &lt;dbl&gt;, `39783` &lt;dbl&gt;, `39814` &lt;dbl&gt;, `39845` &lt;dbl&gt;, `39873` &lt;dbl&gt;,
+## #   `39904` &lt;dbl&gt;, `39934` &lt;dbl&gt;, `39965` &lt;dbl&gt;, `39995` &lt;dbl&gt;, `40026` &lt;dbl&gt;,
+## #   `40057` &lt;dbl&gt;, `40087` &lt;dbl&gt;, `40118` &lt;dbl&gt;, `40148` &lt;dbl&gt;, `40179` &lt;dbl&gt;,
+## #   `40210` &lt;dbl&gt;, `40238` &lt;dbl&gt;, `40269` &lt;dbl&gt;, `40299` &lt;dbl&gt;, `40330` &lt;dbl&gt;,
+## #   `40360` &lt;dbl&gt;, `40391` &lt;dbl&gt;, `40422` &lt;dbl&gt;, `40452` &lt;dbl&gt;, `40483` &lt;dbl&gt;,
+## #   `40513` &lt;dbl&gt;, `40544` &lt;dbl&gt;, `40575` &lt;dbl&gt;, `40603` &lt;dbl&gt;, `40634` &lt;dbl&gt;,
+## #   `40664` &lt;dbl&gt;, `40695` &lt;dbl&gt;, `40725` &lt;dbl&gt;, `40756` &lt;dbl&gt;, `40787` &lt;dbl&gt;,
+## #   `40817` &lt;dbl&gt;, `40848` &lt;dbl&gt;, `40878` &lt;dbl&gt;, `40909` &lt;dbl&gt;, `40940` &lt;dbl&gt;,
+## #   `40969` &lt;dbl&gt;, `41000` &lt;dbl&gt;, `41030` &lt;dbl&gt;, `41061` &lt;dbl&gt;, `41091` &lt;dbl&gt;,
+## #   `41122` &lt;dbl&gt;, `41153` &lt;dbl&gt;, `41183` &lt;dbl&gt;, `41214` &lt;dbl&gt;, `41244` &lt;dbl&gt;,
+## #   `41275` &lt;dbl&gt;, `41306` &lt;dbl&gt;, `41334` &lt;dbl&gt;, `41365` &lt;dbl&gt;, `41395` &lt;dbl&gt;,
+## #   `41426` &lt;dbl&gt;, `41456` &lt;dbl&gt;, `41487` &lt;dbl&gt;, ...</code></pre>
+<pre class="r"><code>p3 &lt;- p2[p2$UN_ADMIN == &quot;COMUNA&quot;, ]
+p3</code></pre>
+<pre><code>## # A tibble: 346 x 154
+##    ORDEN UN_ADMIN REGION `UNIDAD TERRITO~ `38353` `38384` `38412` `38443`
+##    &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  
+##  1 4     COMUNA   1      Arica            23.553~ 16.597~ 14.994~ 18.747~
+##  2 5     COMUNA   1      Camarones        0       0       0       0      
+##  3 7     COMUNA   1      Putre            0       0       0       0      
+##  4 8     COMUNA   1      General Lagos    0       0       0       0      
+##  5 11    COMUNA   15     Iquique          31.628~ 25.094~ 27.471~ 45.554~
+##  6 12    COMUNA   15     Alto Hospicio    -       -       -       10.297~
+##  7 14    COMUNA   15     Camiña           0       0       0       0      
+##  8 15    COMUNA   15     Colchane         0       0       0       0      
+##  9 16    COMUNA   15     Huara            0       0       0       0      
+## 10 17    COMUNA   15     Pica             10.036~ 0       0       0      
+## # ... with 336 more rows, and 146 more variables: `38473` &lt;chr&gt;, `38504` &lt;chr&gt;,
+## #   `38534` &lt;dbl&gt;, `38565` &lt;dbl&gt;, `38596` &lt;dbl&gt;, `38626` &lt;dbl&gt;, `38657` &lt;dbl&gt;,
+## #   `38687` &lt;dbl&gt;, `38718` &lt;dbl&gt;, `38749` &lt;dbl&gt;, `38777` &lt;dbl&gt;, `38808` &lt;dbl&gt;,
+## #   `38838` &lt;dbl&gt;, `38869` &lt;dbl&gt;, `38899` &lt;dbl&gt;, `38930` &lt;dbl&gt;, `38961` &lt;dbl&gt;,
+## #   `38991` &lt;dbl&gt;, `39022` &lt;dbl&gt;, `39052` &lt;dbl&gt;, `39083` &lt;dbl&gt;, `39114` &lt;dbl&gt;,
+## #   `39142` &lt;dbl&gt;, `39173` &lt;dbl&gt;, `39203` &lt;dbl&gt;, `39234` &lt;dbl&gt;, `39264` &lt;dbl&gt;,
+## #   `39295` &lt;dbl&gt;, `39326` &lt;dbl&gt;, `39356` &lt;dbl&gt;, `39387` &lt;dbl&gt;, `39417` &lt;dbl&gt;,
+## #   `39448` &lt;dbl&gt;, `39479` &lt;dbl&gt;, `39508` &lt;dbl&gt;, `39539` &lt;dbl&gt;, `39569` &lt;dbl&gt;,
+## #   `39600` &lt;dbl&gt;, `39630` &lt;dbl&gt;, `39661` &lt;dbl&gt;, `39692` &lt;dbl&gt;, `39722` &lt;dbl&gt;,
+## #   `39753` &lt;dbl&gt;, `39783` &lt;dbl&gt;, `39814` &lt;dbl&gt;, `39845` &lt;dbl&gt;, `39873` &lt;dbl&gt;,
+## #   `39904` &lt;dbl&gt;, `39934` &lt;dbl&gt;, `39965` &lt;dbl&gt;, `39995` &lt;dbl&gt;, `40026` &lt;dbl&gt;,
+## #   `40057` &lt;dbl&gt;, `40087` &lt;dbl&gt;, `40118` &lt;dbl&gt;, `40148` &lt;dbl&gt;, `40179` &lt;dbl&gt;,
+## #   `40210` &lt;dbl&gt;, `40238` &lt;dbl&gt;, `40269` &lt;dbl&gt;, `40299` &lt;dbl&gt;, `40330` &lt;dbl&gt;,
+## #   `40360` &lt;dbl&gt;, `40391` &lt;dbl&gt;, `40422` &lt;dbl&gt;, `40452` &lt;dbl&gt;, `40483` &lt;dbl&gt;,
+## #   `40513` &lt;dbl&gt;, `40544` &lt;dbl&gt;, `40575` &lt;dbl&gt;, `40603` &lt;dbl&gt;, `40634` &lt;dbl&gt;,
+## #   `40664` &lt;dbl&gt;, `40695` &lt;dbl&gt;, `40725` &lt;dbl&gt;, `40756` &lt;dbl&gt;, `40787` &lt;dbl&gt;,
+## #   `40817` &lt;dbl&gt;, `40848` &lt;dbl&gt;, `40878` &lt;dbl&gt;, `40909` &lt;dbl&gt;, `40940` &lt;dbl&gt;,
+## #   `40969` &lt;dbl&gt;, `41000` &lt;dbl&gt;, `41030` &lt;dbl&gt;, `41061` &lt;dbl&gt;, `41091` &lt;dbl&gt;,
+## #   `41122` &lt;dbl&gt;, `41153` &lt;dbl&gt;, `41183` &lt;dbl&gt;, `41214` &lt;dbl&gt;, `41244` &lt;dbl&gt;,
+## #   `41275` &lt;dbl&gt;, `41306` &lt;dbl&gt;, `41334` &lt;dbl&gt;, `41365` &lt;dbl&gt;, `41395` &lt;dbl&gt;,
+## #   `41426` &lt;dbl&gt;, `41456` &lt;dbl&gt;, `41487` &lt;dbl&gt;, ...</code></pre>
+<pre class="r"><code>myvars &lt;- c(&quot;UNIDAD TERRITORIAL&quot;, &quot;38353&quot;)
+newdata &lt;- p3[myvars]
+newdata</code></pre>
+<pre><code>## # A tibble: 346 x 2
+##    `UNIDAD TERRITORIAL` `38353`           
+##    &lt;chr&gt;                &lt;chr&gt;             
+##  1 Arica                23.553227394366225
+##  2 Camarones            0                 
+##  3 Putre                0                 
+##  4 General Lagos        0                 
+##  5 Iquique              31.628182332416248
+##  6 Alto Hospicio        -                 
+##  7 Camiña               0                 
+##  8 Colchane             0                 
+##  9 Huara                0                 
+## 10 Pica                 10.036927529201186
+## # ... with 336 more rows</code></pre>
+<pre class="r"><code>vio &lt;- as.numeric(as.matrix(newdata)[,2])
+
+summary(vio)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##   0.000   0.000   6.807  12.718  15.992 124.441       4</code></pre>
 </div>
 
 
