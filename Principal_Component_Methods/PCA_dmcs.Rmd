@@ -1,6 +1,6 @@
 ---
-title: "PCAsobreDMCS"
-author: "Christian Castro"
+title: "PCA sobre DMCS"
+author: "DataIntelligence"
 date: "07-08-2020"
 output: html_document
 ---
@@ -21,24 +21,34 @@ options(warn=-1)
 
 ## Análisis de la delincuencia en Chile
 
-
+TASA DE CASOS POLICIALES POR DELITOS SEGÚN UNIDAD TERRITORIAL 
 
 ```{r}
 
 url1 <- "https://github.com/Sud-Austral/Bases_de_Datos_DS/blob/master/DMCS/Tasa_casos_dmcs_mensual_2001_2017w.xlsx?raw=true"
 p1f <- tempfile()
 download.file(url1, p1f, mode = "wb")
-p1 <- read_excel(path = p1f, sheet = 2)
 
+p1 <- read_excel(path = p1f, sheet = 2)
 p2 = p1[-c(1, 2),]
 names(p2) <- p2[1,]
 p2 <- p2[-1,]
 p3 <- p2[p2$UN_ADMIN == "COMUNA", ]
 myvars <- c("UNIDAD TERRITORIAL", "38353")
 newdata <- p3[myvars]
-vio <- as.numeric(as.matrix(newdata)[,2])
+rob_vio_int <- as.numeric(as.matrix(newdata)[,2])
+summary(rob_vio_int)
 
-summary(vio)
+p1 <- read_excel(path = p1f, sheet = 4)
+p2 = p1[-c(1, 2),]
+names(p2) <- p2[1,]
+p2 <- p2[-1,]
+p3 <- p2[p2$UN_ADMIN == "COMUNA", ]
+myvars <- c("UNIDAD TERRITORIAL", "38353")
+newdata <- p3[myvars]
+rob_fuerza <- as.numeric(as.matrix(newdata)[,2])
+summary(rob_fuerza)
+
 ```
 
 
