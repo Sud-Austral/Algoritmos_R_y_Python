@@ -38,7 +38,6 @@ En conjunto, el objetivo principal del análisis de componentes principales es:
 3 identificar variables correlacionadas
 
 ```{r pca 01}
-
 library("FactoMineR")
 library("factoextra")
 library(readxl)
@@ -47,187 +46,200 @@ library("openxlsx")
 library(httr)
 library(xlsx)
 library(readr)
-
-# para leer un repositorio privado:
-# github_link <- "https://raw.githubusercontent.com/Sud-Austral/Bases_de_Datos_DS/master/DMCS/Tasa%20Anual_DENUNCIA_Robo_con_vio.csv"
-# api_key <- "1913b82cc62967f3e5fe93e9ce176c806e0703ec"
-# req <- GET(github_link, add_headers(Authorization = paste("token", api_key)))
-#############################
-
-# para llenar un pepositorio: tiene un error.
-
-# data <- read_csv( "https://raw.githubusercontent.com/Sud-Austral/Bases_de_Datos_DS/master/DMCS/Tasa%20Anual_DENUNCIA_Robo_con_vio.csv")
-# write.csv(data,'data.csv')
-#############################
-
-delitos_2019 <- read.csv("C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_DS/tasa_2019_den_bueno.csv",
-  header = TRUE,
-  stringsAsFactors = FALSE, 
-  strip.white = TRUE,
-  sep = ';', 
-  dec = ",",
-  row.names=1)
-
-delitos_2019$robo_con_vio <- as.numeric(delitos_2019$robo_con_vio)
-delitos_2019$robo_con_sor <- as.numeric(delitos_2019$robo_con_sor)
-delitos_2019$robo_con_fuer <- as.numeric(delitos_2019$robo_con_fuer)
-delitos_2019$robo_vehi <- as.numeric(delitos_2019$robo_vehi)
-delitos_2019$robo_acce_vehi <- as.numeric(delitos_2019$robo_acce_vehi)
-delitos_2019$robo_lugar_h <- as.numeric(delitos_2019$robo_lugar_h)
-delitos_2019$robo_lugar_nh <- as.numeric(delitos_2019$robo_lugar_nh)
-delitos_2019$robos_con_fuer_otros <- as.numeric(delitos_2019$robos_con_fuer_otros )
-delitos_2019$hurtos<- as.numeric(delitos_2019$hurtos)
-delitos_2019$lesiones <- as.numeric(delitos_2019$lesiones)
-delitos_2019$lesiones_lev <- as.numeric(delitos_2019$lesiones_lev)
-delitos_2019$lesiones_gra <- as.numeric(delitos_2019$lesiones_gra)
-delitos_2019$violacion <- as.numeric(delitos_2019$violacion)
-delitos_2019$homicidio <- as.numeric(delitos_2019$homicidio)
-typeof(delitos_2019$robo_con_vio)
-delitos_2019.active <- na.omit(delitos_2019)
 ```
+```{r}
 
-Valores propios / variaciones
-
-Como se describió en secciones anteriores, los valores propios miden la cantidad de variación retenida por cada componente principal. Los valores propios son grandes para las primeras PC y pequeños para las PC posteriores. Es decir, las primeras PC corresponden a las direcciones con la cantidad máxima de variación en el conjunto de datos.
-
-Examinamos los valores propios para determinar el número de componentes principales a considerar. Los valores propios y la proporción de variaciones (es decir, información) retenidos por los componentes principales (PC) se pueden extraer mediante la función get_eigenvalue () [paquete factoextra].
-
-
-
-
-```{r pca 02}
-head(delitos_2019.active)
- res.pca <- PCA(delitos_2019.active, graph = FALSE)
- print(res.pca)
-eig.val <- get_eigenvalue(res.pca)
-eig.val
-fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))
-```
-
-La suma de todos los valores propios da una varianza total de 10.
-
-La proporción de variación explicada por cada valor propio se da en la segunda columna. Por ejemplo, 4.124 dividido por 10 es igual a 0.4124, o aproximadamente el 41.24% de la variación se explica por este primer valor propio. El porcentaje acumulado explicado se obtiene sumando las proporciones sucesivas de variación explicadas para obtener el total acumulado. Por ejemplo, 41.242% más 18.385% es igual a 59.627%, y así sucesivamente. Por lo tanto, aproximadamente el 59.627% de la variación se explica por los dos primeros valores propios juntos.
-
-Los valores propios se pueden usar para determinar el número de componentes principales a retener después de PCA (Kaiser 1961):
-
-     Un valor propio> 1 indica que las PC representan más varianza que la contabilizada por una de las variables originales en los datos estandarizados. Esto se usa comúnmente como un punto de corte para el cual se retienen las PC. Esto es válido solo cuando los datos están estandarizados.
-
-     También puede limitar el número de componentes a ese número que representa una cierta fracción de la varianza total. Por ejemplo, si está satisfecho con el 70% de la varianza total explicada, use el número de componentes para lograrlo.
-
-Desafortunadamente, no hay una forma objetiva bien aceptada de decidir cuántos componentes principales son suficientes. Esto dependerá del campo de aplicación específico y del conjunto de datos específico. En la práctica, tendemos a mirar los primeros componentes principales para encontrar patrones interesantes en los datos.
-
-En nuestro análisis, los primeros tres componentes principales explican el 72% de la variación. Este es un porcentaje aceptablemente grande.
-
-Un método alternativo para determinar el número de componentes principales es mirar un diagrama de pantalla, que es el diagrama de valores propios ordenados de mayor a menor. El número de componentes se determina en el punto, más allá del cual los valores propios restantes son relativamente pequeños y de tamaño comparable (Jollife 2002, Peres-Neto, Jackson y Somers (2005)).
-
-
-```{r pca 03}
-
-data(decathlon2)
-head(decathlon2)
-
-# Comenzamos extrayendo el subconjunto de individuos activos y variables activas para el análisis del componente principal:
-decathlon2.active <- decathlon2[1:23, 1:10]
-head(decathlon2.active[, 1:6], 4)
-
-# Estandarizacion de los datos
-#La función de base R `scale() se puede utilizar para estandarizar los datos. Toma una matriz numérica como entrada y realiza el escalado en las columnas.
-
-#Tenga en cuenta que, por defecto, la función PCA () [en FactoMineR], estandariza los datos automáticamente durante el PCA; así que no necesita hacer esta transformación antes del PCA.
-
-# PCA(X, scale.unit = TRUE, ncp = 5, graph = TRUE)
-
-# Donde:
-# X: un dataframe. Las filas son individuos y las columnas son variables numéricas.
-# scale.unit: un valor lógico. Si es VERDADERO, los datos se escalan a la varianza de la unidad antes del análisis. Esta estandarización a la misma escala evita que algunas variables se vuelvan dominantes solo por sus grandes unidades de medida. Hace variable comparable.
-# ncp: número de dimensiones mantenidas en los resultados finales.
-# graph: un valor lógico. Si es VERDADERO, se muestra un gráfico.
-
-# El siguiente código R calcula el análisis de componentes principales en los individuos / variables activos:
-
-
-res.pca <- PCA(decathlon2.active, graph = FALSE)
-
-# El resultado de la función PCA() es una lista que incluye los siguientes componentes: análisis de los individuos / variables activos:
-print(res.pca)
-```
-
-Visualización e interpretación
-
-Utilizaremos el paquete factoextra R para ayudar en la interpretación de PCA. 
-
-Estas funciones incluyen:
-
-    get_eigenvalue (res.pca): extrae los valores propios / varianzas de los componentes principales
-    fviz_eig (res.pca): visualiza los valores propios
-    get_pca_ind (res.pca), get_pca_var (res.pca): extrae los resultados para individuos y variables, respectivamente.
-    fviz_pca_ind (res.pca), fviz_pca_var (res.pca): visualice los resultados individuales y variables, respectivamente.
-    fviz_pca_biplot (res.pca): crea un biplot de individuos y variables.
-
-En las siguientes secciones, ilustraremos cada una de estas funciones.
-
-Valores propios / variaciones
-
-Como se describió en secciones anteriores, los valores propios miden la cantidad de variación retenida por cada componente principal. Los valores propios son grandes para las primeras PC y pequeños para las PC posteriores. Es decir, las primeras PC corresponden a las direcciones con la cantidad máxima de variación en el conjunto de datos.
-
-Examinamos los valores propios para determinar el número de componentes principales a considerar. Los valores propios y la proporción de variaciones (es decir, información) retenidos por los componentes principales (PC) se pueden extraer mediante la función get_eigenvalue () [paquete factoextra].
-
-
-```{r cars3}
-
-eig.val <- get_eigenvalue(res.pca)
-eig.val
-```
-
-La suma de todos los valores propios da una varianza total de 10.
-
-La proporción de variación explicada por cada valor propio se da en la segunda columna. Por ejemplo, 4.124 dividido por 10 es igual a 0.4124, o aproximadamente el 41.24% de la variación se explica por este primer valor propio. El porcentaje acumulado explicado se obtiene sumando las proporciones sucesivas de variación explicadas para obtener el total acumulado. Por ejemplo, 41.242% más 18.385% es igual a 59.627%, y así sucesivamente. Por lo tanto, aproximadamente el 59.627% de la variación se explica por los dos primeros valores propios juntos.
-
-Los valores propios se pueden usar para determinar el número de componentes principales a retener después de PCA (Kaiser 1961):
-
-    Un valor propio> 1 indica que las PC representan más varianza que la contabilizada por una de las variables originales en los datos estandarizados. Esto se usa comúnmente como un punto de corte para el cual se retienen las PC. Esto es válido solo cuando los datos están estandarizados.
-
-    También puede limitar el número de componentes a ese número que representa una cierta fracción de la varianza total. Por ejemplo, si está satisfecho con el 70% de la varianza total explicada, use el número de componentes para lograrlo.
-
-Desafortunadamente, no hay una forma objetiva bien aceptada de decidir cuántos componentes principales son suficientes. Esto dependerá del campo de aplicación específico y del conjunto de datos específico. En la práctica, tendemos a mirar los primeros componentes principales para encontrar patrones interesantes en los datos.
-
-En nuestro análisis, los primeros tres componentes principales explican el 72% de la variación. Este es un porcentaje aceptablemente grande.
-
-Un método alternativo para determinar el número de componentes principales es mirar un diagrama de pantalla, que es el diagrama de valores propios ordenados de mayor a menor. El número de componentes se determina en el punto, más allá del cual los valores propios restantes son relativamente pequeños y de tamaño comparable (Jollife 2002, Peres-Neto, Jackson y Somers (2005)).
-
-El diagrama de pantalla se puede generar utilizando la función fviz_eig () o fviz_screeplot () [paquete factoextra].
-
-
-
-```{r cars4}
-fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))
+url1 <- "https://github.com/Sud-Austral/Bases_de_Datos_DS/blob/master/DMCS/Frec_CASOS_POLICIALES_ANUAL_2001_2016w-2.xls?raw=true"
+p1f <- tempfile()
+download.file(url1, p1f, mode = "wb")
+p1 <- read_excel(path = p1f, sheet = 1)
+p1
 ```
 
 
+<!-- ```{r pca 01} -->
 
 
-```{r acp5}
+<!-- # para leer un repositorio privado: -->
+<!-- # github_link <- "https://raw.githubusercontent.com/Sud-Austral/Bases_de_Datos_DS/master/DMCS/Tasa%20Anual_DENUNCIA_Robo_con_vio.csv" -->
+<!-- # api_key <- "1913b82cc62967f3e5fe93e9ce176c806e0703ec" -->
+<!-- # req <- GET(github_link, add_headers(Authorization = paste("token", api_key))) -->
+<!-- ############################# -->
 
-var <- get_pca_var(res.pca)
-var
-# Coordinates
-head(var$coord)
-# Cos2: quality on the factore map
-head(var$cos2)
-# Contributions to the principal components
-head(var$contrib)
+<!-- # para llenar un pepositorio: tiene un error. -->
 
-# Coordinates of variables
-head(var$coord, 4)
+<!-- # data <- read_csv( "https://raw.githubusercontent.com/Sud-Austral/Bases_de_Datos_DS/master/DMCS/Tasa%20Anual_DENUNCIA_Robo_con_vio.csv") -->
+<!-- # write.csv(data,'data.csv') -->
+<!-- ############################# -->
 
-fviz_pca_var(res.pca, col.var = "black")
+<!-- delitos_2019 <- read.csv("C:/Users/usuario/Documents/GitHub_Personal/Bases_de_Datos_DS/tasa_2019_den_bueno.csv", -->
+<!--   header = TRUE, -->
+<!--   stringsAsFactors = FALSE,  -->
+<!--   strip.white = TRUE, -->
+<!--   sep = ';',  -->
+<!--   dec = ",", -->
+<!--   row.names=1) -->
+
+<!-- delitos_2019$robo_con_vio <- as.numeric(delitos_2019$robo_con_vio) -->
+<!-- delitos_2019$robo_con_sor <- as.numeric(delitos_2019$robo_con_sor) -->
+<!-- delitos_2019$robo_con_fuer <- as.numeric(delitos_2019$robo_con_fuer) -->
+<!-- delitos_2019$robo_vehi <- as.numeric(delitos_2019$robo_vehi) -->
+<!-- delitos_2019$robo_acce_vehi <- as.numeric(delitos_2019$robo_acce_vehi) -->
+<!-- delitos_2019$robo_lugar_h <- as.numeric(delitos_2019$robo_lugar_h) -->
+<!-- delitos_2019$robo_lugar_nh <- as.numeric(delitos_2019$robo_lugar_nh) -->
+<!-- delitos_2019$robos_con_fuer_otros <- as.numeric(delitos_2019$robos_con_fuer_otros ) -->
+<!-- delitos_2019$hurtos<- as.numeric(delitos_2019$hurtos) -->
+<!-- delitos_2019$lesiones <- as.numeric(delitos_2019$lesiones) -->
+<!-- delitos_2019$lesiones_lev <- as.numeric(delitos_2019$lesiones_lev) -->
+<!-- delitos_2019$lesiones_gra <- as.numeric(delitos_2019$lesiones_gra) -->
+<!-- delitos_2019$violacion <- as.numeric(delitos_2019$violacion) -->
+<!-- delitos_2019$homicidio <- as.numeric(delitos_2019$homicidio) -->
+<!-- typeof(delitos_2019$robo_con_vio) -->
+<!-- delitos_2019.active <- na.omit(delitos_2019) -->
+<!-- ``` -->
+
+<!-- Valores propios / variaciones -->
+
+<!-- Como se describió en secciones anteriores, los valores propios miden la cantidad de variación retenida por cada componente principal. Los valores propios son grandes para las primeras PC y pequeños para las PC posteriores. Es decir, las primeras PC corresponden a las direcciones con la cantidad máxima de variación en el conjunto de datos. -->
+
+<!-- Examinamos los valores propios para determinar el número de componentes principales a considerar. Los valores propios y la proporción de variaciones (es decir, información) retenidos por los componentes principales (PC) se pueden extraer mediante la función get_eigenvalue () [paquete factoextra]. -->
 
 
-```
 
 
-```{r pressure, echo=FALSE}
+<!-- ```{r pca 02} -->
+<!-- head(delitos_2019.active) -->
+<!--  res.pca <- PCA(delitos_2019.active, graph = FALSE) -->
+<!--  print(res.pca) -->
+<!-- eig.val <- get_eigenvalue(res.pca) -->
+<!-- eig.val -->
+<!-- fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50)) -->
+<!-- ``` -->
 
-```
+<!-- La suma de todos los valores propios da una varianza total de 10. -->
+
+<!-- La proporción de variación explicada por cada valor propio se da en la segunda columna. Por ejemplo, 4.124 dividido por 10 es igual a 0.4124, o aproximadamente el 41.24% de la variación se explica por este primer valor propio. El porcentaje acumulado explicado se obtiene sumando las proporciones sucesivas de variación explicadas para obtener el total acumulado. Por ejemplo, 41.242% más 18.385% es igual a 59.627%, y así sucesivamente. Por lo tanto, aproximadamente el 59.627% de la variación se explica por los dos primeros valores propios juntos. -->
+
+<!-- Los valores propios se pueden usar para determinar el número de componentes principales a retener después de PCA (Kaiser 1961): -->
+
+<!--      Un valor propio> 1 indica que las PC representan más varianza que la contabilizada por una de las variables originales en los datos estandarizados. Esto se usa comúnmente como un punto de corte para el cual se retienen las PC. Esto es válido solo cuando los datos están estandarizados. -->
+
+<!--      También puede limitar el número de componentes a ese número que representa una cierta fracción de la varianza total. Por ejemplo, si está satisfecho con el 70% de la varianza total explicada, use el número de componentes para lograrlo. -->
+
+<!-- Desafortunadamente, no hay una forma objetiva bien aceptada de decidir cuántos componentes principales son suficientes. Esto dependerá del campo de aplicación específico y del conjunto de datos específico. En la práctica, tendemos a mirar los primeros componentes principales para encontrar patrones interesantes en los datos. -->
+
+<!-- En nuestro análisis, los primeros tres componentes principales explican el 72% de la variación. Este es un porcentaje aceptablemente grande. -->
+
+<!-- Un método alternativo para determinar el número de componentes principales es mirar un diagrama de pantalla, que es el diagrama de valores propios ordenados de mayor a menor. El número de componentes se determina en el punto, más allá del cual los valores propios restantes son relativamente pequeños y de tamaño comparable (Jollife 2002, Peres-Neto, Jackson y Somers (2005)). -->
+
+
+<!-- ```{r pca 03} -->
+
+<!-- data(decathlon2) -->
+<!-- head(decathlon2) -->
+
+<!-- # Comenzamos extrayendo el subconjunto de individuos activos y variables activas para el análisis del componente principal: -->
+<!-- decathlon2.active <- decathlon2[1:23, 1:10] -->
+<!-- head(decathlon2.active[, 1:6], 4) -->
+
+<!-- # Estandarizacion de los datos -->
+<!-- #La función de base R `scale() se puede utilizar para estandarizar los datos. Toma una matriz numérica como entrada y realiza el escalado en las columnas. -->
+
+<!-- #Tenga en cuenta que, por defecto, la función PCA () [en FactoMineR], estandariza los datos automáticamente durante el PCA; así que no necesita hacer esta transformación antes del PCA. -->
+
+<!-- # PCA(X, scale.unit = TRUE, ncp = 5, graph = TRUE) -->
+
+<!-- # Donde: -->
+<!-- # X: un dataframe. Las filas son individuos y las columnas son variables numéricas. -->
+<!-- # scale.unit: un valor lógico. Si es VERDADERO, los datos se escalan a la varianza de la unidad antes del análisis. Esta estandarización a la misma escala evita que algunas variables se vuelvan dominantes solo por sus grandes unidades de medida. Hace variable comparable. -->
+<!-- # ncp: número de dimensiones mantenidas en los resultados finales. -->
+<!-- # graph: un valor lógico. Si es VERDADERO, se muestra un gráfico. -->
+
+<!-- # El siguiente código R calcula el análisis de componentes principales en los individuos / variables activos: -->
+
+
+<!-- res.pca <- PCA(decathlon2.active, graph = FALSE) -->
+
+<!-- # El resultado de la función PCA() es una lista que incluye los siguientes componentes: análisis de los individuos / variables activos: -->
+<!-- print(res.pca) -->
+<!-- ``` -->
+
+<!-- Visualización e interpretación -->
+
+<!-- Utilizaremos el paquete factoextra R para ayudar en la interpretación de PCA.  -->
+
+<!-- Estas funciones incluyen: -->
+
+<!--     get_eigenvalue (res.pca): extrae los valores propios / varianzas de los componentes principales -->
+<!--     fviz_eig (res.pca): visualiza los valores propios -->
+<!--     get_pca_ind (res.pca), get_pca_var (res.pca): extrae los resultados para individuos y variables, respectivamente. -->
+<!--     fviz_pca_ind (res.pca), fviz_pca_var (res.pca): visualice los resultados individuales y variables, respectivamente. -->
+<!--     fviz_pca_biplot (res.pca): crea un biplot de individuos y variables. -->
+
+<!-- En las siguientes secciones, ilustraremos cada una de estas funciones. -->
+
+<!-- Valores propios / variaciones -->
+
+<!-- Como se describió en secciones anteriores, los valores propios miden la cantidad de variación retenida por cada componente principal. Los valores propios son grandes para las primeras PC y pequeños para las PC posteriores. Es decir, las primeras PC corresponden a las direcciones con la cantidad máxima de variación en el conjunto de datos. -->
+
+<!-- Examinamos los valores propios para determinar el número de componentes principales a considerar. Los valores propios y la proporción de variaciones (es decir, información) retenidos por los componentes principales (PC) se pueden extraer mediante la función get_eigenvalue () [paquete factoextra]. -->
+
+
+<!-- ```{r cars3} -->
+
+<!-- eig.val <- get_eigenvalue(res.pca) -->
+<!-- eig.val -->
+<!-- ``` -->
+
+<!-- La suma de todos los valores propios da una varianza total de 10. -->
+
+<!-- La proporción de variación explicada por cada valor propio se da en la segunda columna. Por ejemplo, 4.124 dividido por 10 es igual a 0.4124, o aproximadamente el 41.24% de la variación se explica por este primer valor propio. El porcentaje acumulado explicado se obtiene sumando las proporciones sucesivas de variación explicadas para obtener el total acumulado. Por ejemplo, 41.242% más 18.385% es igual a 59.627%, y así sucesivamente. Por lo tanto, aproximadamente el 59.627% de la variación se explica por los dos primeros valores propios juntos. -->
+
+<!-- Los valores propios se pueden usar para determinar el número de componentes principales a retener después de PCA (Kaiser 1961): -->
+
+<!--     Un valor propio> 1 indica que las PC representan más varianza que la contabilizada por una de las variables originales en los datos estandarizados. Esto se usa comúnmente como un punto de corte para el cual se retienen las PC. Esto es válido solo cuando los datos están estandarizados. -->
+
+<!--     También puede limitar el número de componentes a ese número que representa una cierta fracción de la varianza total. Por ejemplo, si está satisfecho con el 70% de la varianza total explicada, use el número de componentes para lograrlo. -->
+
+<!-- Desafortunadamente, no hay una forma objetiva bien aceptada de decidir cuántos componentes principales son suficientes. Esto dependerá del campo de aplicación específico y del conjunto de datos específico. En la práctica, tendemos a mirar los primeros componentes principales para encontrar patrones interesantes en los datos. -->
+
+<!-- En nuestro análisis, los primeros tres componentes principales explican el 72% de la variación. Este es un porcentaje aceptablemente grande. -->
+
+<!-- Un método alternativo para determinar el número de componentes principales es mirar un diagrama de pantalla, que es el diagrama de valores propios ordenados de mayor a menor. El número de componentes se determina en el punto, más allá del cual los valores propios restantes son relativamente pequeños y de tamaño comparable (Jollife 2002, Peres-Neto, Jackson y Somers (2005)). -->
+
+<!-- El diagrama de pantalla se puede generar utilizando la función fviz_eig () o fviz_screeplot () [paquete factoextra]. -->
+
+
+
+<!-- ```{r cars4} -->
+<!-- fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50)) -->
+<!-- ``` -->
+
+
+
+
+<!-- ```{r acp5} -->
+
+<!-- var <- get_pca_var(res.pca) -->
+<!-- var -->
+<!-- # Coordinates -->
+<!-- head(var$coord) -->
+<!-- # Cos2: quality on the factore map -->
+<!-- head(var$cos2) -->
+<!-- # Contributions to the principal components -->
+<!-- head(var$contrib) -->
+
+<!-- # Coordinates of variables -->
+<!-- head(var$coord, 4) -->
+
+<!-- fviz_pca_var(res.pca, col.var = "black") -->
+
+
+<!-- ``` -->
+
+
+<!-- ```{r pressure, echo=FALSE} -->
+
+<!-- ``` -->
 
 
