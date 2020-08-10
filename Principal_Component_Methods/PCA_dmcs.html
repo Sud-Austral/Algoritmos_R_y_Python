@@ -371,7 +371,7 @@ summary {
 
 <div id="análisis-de-la-delincuencia-en-chile" class="section level2">
 <h2>Análisis de la delincuencia en Chile</h2>
-<p>TASA DE CASOS POLICIALES POR DELITOS SEGÚN UNIDAD TERRITORIAL</p>
+<p>Éste código permite extraer la información necesaria para realizar un análisis sobre un año específico de los DMCS.</p>
 <pre class="r"><code>url1 &lt;- &quot;https://github.com/Sud-Austral/Bases_de_Datos_DS/blob/master/DMCS/Tasa_casos_dmcs_mensual_2001_2017w.xlsx?raw=true&quot;
 p1f &lt;- tempfile()
 download.file(url1, p1f, mode = &quot;wb&quot;)
@@ -426,9 +426,9 @@ summary(rob_fuerza)</code></pre>
 
 v &lt;- seq(4, 10, 1)
 for ( i in v) {
-function_delitos(i)
-experience=rob_fuerza
-cbind(rob_fuerza, experience)
+    function_delitos(i)
+    experience = rob_fuerza
+    cbind(rob_fuerza, experience)
 }</code></pre>
 <pre><code>## New names:
 ## * `` -&gt; ...2
