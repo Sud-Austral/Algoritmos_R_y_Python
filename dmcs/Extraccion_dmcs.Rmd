@@ -29,48 +29,83 @@ url1 <- "https://github.com/Sud-Austral/Bases_de_Datos_DS/blob/master/DMCS/Tasa_
 p1f <- tempfile()
 download.file(url1, p1f, mode = "wb")
 
-p1 <- read_excel(path = p1f, sheet = 2)
-p2 = p1[-c(1, 2),]
-names(p2) <- p2[1,]
-p2 <- p2[-1,]
-p3 <- p2[p2$UN_ADMIN == "COMUNA", ]
-myvars <- c("UNIDAD TERRITORIAL", "38353")
-newdata <- p3[myvars]
-rob_vio_int <- as.numeric(as.matrix(newdata)[,2])
-summary(rob_vio_int)
-
-p1 <- read_excel(path = p1f, sheet = 3)
-p2 = p1[-c(1, 2),]
-names(p2) <- p2[1,]
-p2 <- p2[-1,]
-p3 <- p2[p2$UN_ADMIN == "COMUNA", ]
-myvars <- c("UNIDAD TERRITORIAL", "38353")
-newdata <- p3[myvars]
-rob_fuerza <- as.numeric(as.matrix(newdata)[,2])
-summary(rob_fuerza)
-
 
 
 function_delitos <- function(arg) {
-    p1 <- read_excel(path = p1f, sheet = arg)
-    p2 = p1[-c(1, 2),]
-    invisible(capture.output( names(p2) <- p2[1,], file='NUL'))
-    p2 <- p2[-1,]
-    p3 <- p2[p2$UN_ADMIN == "COMUNA", ]
-    myvars <- c("UNIDAD TERRITORIAL", "38353")
-    newdata <- p3[myvars]
-    rob_fuerza <- as.numeric(as.matrix(newdata)[,2])
-    print(summary(rob_fuerza))
+p1 <- read_excel(path = p1f, sheet = arg)
+p2 = p1[-c(1, 2),]
+names(p2) <- p2[1,]
+p2 <- p2[-1,]
+p3 <- p2[p2$UN_ADMIN == "COMUNA", ]
+myvars <- c("UNIDAD TERRITORIAL", "38353")
+newdata <- p3[myvars]
+delito <- as.numeric(as.matrix(newdata)[,2])
+print(delito)
+
+#df <- delito
+
+# summary(delito)
+
 }
 
-v <- seq(4, 10, 1)
-for ( i in v) {
-    function_delitos(i)
-    experience = rob_fuerza
-    cbind(rob_fuerza, experience)
-}
+datalist = list()
 
-rob_fuerza
+for (i in 2:4) {
+    dat <- data.frame(function_delitos(i))
+    datalist[[i]] <- dat
+    # experience = rob_fuerza
+    # cbind(rob_fuerza, experience)
+
+}
+datalist
+#df = data.frame(datalist)
+#df
+
+#datalist
+big_data = do.call(rbind, datalist)
+big_data
+#df
+
+
+
+
+
+
+# 
+# p1 <- read_excel(path = p1f, sheet = 3)
+# p2 = p1[-c(1, 2),]
+# names(p2) <- p2[1,]
+# p2 <- p2[-1,]
+# p3 <- p2[p2$UN_ADMIN == "COMUNA", ]
+# myvars <- c("UNIDAD TERRITORIAL", "38353")
+# newdata <- p3[myvars]
+# rob_fuerza <- as.numeric(as.matrix(newdata)[,2])
+# summary(rob_fuerza)
+
+
+
+# function_delitos <- function(arg) {
+#     p1 <- read_excel(path = p1f, sheet = arg)
+#     p2 = p1[-c(1, 2),]
+#     invisible(capture.output( names(p2) <- p2[1,], file='NULL'))
+#     p2 <- p2[-1,]
+#     p3 <- p2[p2$UN_ADMIN == "COMUNA", ]
+#     myvars <- c("UNIDAD TERRITORIAL", "38353")
+#     newdata <- p3[myvars]
+#     rob_fuerza <- as.numeric(as.matrix(newdata)[,2])
+#     print(summary(rob_fuerza))
+# }
+# 
+# 
+# 
+# v <- seq(4, 5, 1)
+# for ( i in v) {
+#     function_delitos(i)
+#     experience = rob_fuerza
+#     cbind(rob_fuerza, experience)
+# }
+
+# rob_fuerza
 ```
 
 
