@@ -135,7 +135,11 @@ class(R0$fecha)
 
   
   R0_1 <- ggplot(zona_norte, aes(as.Date(fecha,  origin='1970-01-01'), R0)) + geom_line(size = 1.5, aes(color = factor(comuna)))+ 
-  theme_economist()+scale_colour_economist() +
+    
+    
+#  theme_economist()+scale_colour_economist() +
+    
+    
 #   scale_color_brewer(palette="Paired")+
 # theme_minimal()+ theme(legend.position="top") +
 
@@ -183,7 +187,7 @@ dev.off()
 ###
 # 
 R0_2 <- ggplot(zona_norte_chico, aes(as.Date(fecha,  origin='1970-01-01'), R0)) + geom_line(size = 1.5, aes(color = factor(comuna)))+ 
-  theme_economist()+scale_colour_economist() +
+#  theme_economist()+scale_colour_economist() +
 
     #  geom_text(x =43959, y = 1.45 , label = "1.4 ", size=7, color="red") +
     # geom_text(x = 43966, y = 1.66, label = "1.61", size=7, color="red") +
@@ -225,7 +229,7 @@ dev.off()
 
 ###
 
-R0_3 <- ggplot(zona_central, aes(as.Date(as.Date(fecha,  origin='1970-01-01')), R0)) + geom_line(size = 1.5, aes(color = factor(comuna)))+  theme_economist()+scale_colour_economist() +
+R0_3 <- ggplot(zona_central, aes(as.Date(as.Date(fecha,  origin='1970-01-01')), R0)) + geom_line(size = 1.5, aes(color = factor(comuna)))+  #theme_economist()+scale_colour_economist() +
 
     # geom_text(x = 43944, y = 1.49, label = "1.44", size=7, color="red") +
     #     geom_text(x = 43966, y = 2.66, label = "2.61", size=7, color="red") +
@@ -273,7 +277,7 @@ dev.off()
 
 
   
-  R0_4 <- ggplot(zona_centro_sur, aes(as.Date(as.Date(fecha,  origin='1970-01-01')), R0)) + geom_line(size = 1.5, aes(color = factor(comuna)))+  theme_economist()+scale_colour_economist() +
+  R0_4 <- ggplot(zona_centro_sur, aes(as.Date(as.Date(fecha,  origin='1970-01-01')), R0)) + geom_line(size = 1.5, aes(color = factor(comuna)))+  #theme_economist()+scale_colour_economist() +
   
     # geom_text(x = 43945, y = 1.37, label = "1.33", size=7, color="red") +
     #     geom_text(x = 43977, y = 2.42, label = "2.38", size=7, color="red") +
@@ -325,7 +329,7 @@ dev.off()
 
 R0_5 <- ggplot(zona_sur_austral, aes(as.Date(as.Date(fecha,  origin='1970-01-01')), R0)) + geom_line(size = 1.5, aes(color = factor(comuna)))+ 
   
-    theme_economist()+scale_colour_economist() +
+ #   theme_economist()+scale_colour_economist() +
 
   # geom_text(x = 43942, y = 1.57, label = "1.54", size=7, color="red") +
   # geom_text(x =  43964, y = 1.89, label = "1.86", size=7, color="red") +
@@ -360,7 +364,7 @@ dev.off()
 ###
 
 R0_6 <- ggplot(zona_prin_ciu_stgo, aes(as.Date(as.Date(fecha,  origin='1970-01-01')), R0)) + geom_line(size = 1.5, aes(color = factor(comuna)))+
-  theme_economist()+scale_colour_economist() +
+ # theme_economist()+scale_colour_economist() +
   
   
   
@@ -402,7 +406,7 @@ dev.off()
 
 ###
 
-R0_7 <- ggplot(zona_menores_R0, aes(as.Date(as.Date(fecha,  origin='1970-01-01')), R0)) + geom_line(size = 1.5, aes(color = factor(comuna)))+ theme_economist()+scale_colour_economist() +  
+R0_7 <- ggplot(zona_menores_R0, aes(as.Date(as.Date(fecha,  origin='1970-01-01')), R0)) + geom_line(size = 1.5, aes(color = factor(comuna)))+ #theme_economist()+scale_colour_economist() +  
 
   
   
