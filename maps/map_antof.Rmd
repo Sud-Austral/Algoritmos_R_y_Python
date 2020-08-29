@@ -37,7 +37,9 @@ library(ggrepel)
 library(gganimate)
 
 shp_comunas_chile = st_read("C:/Users/usuario/Documents/GitHub/Analisis_covid19_con_R/proyecto_integrado/shapes_de_chile/comunas.shp") 
+
 covid19 <- read_xlsx("C:/Users/usuario/Documents/GitHub/Analisis_covid19_con_R/proyecto_integrado/geo_Aypyt/Covid.xlsx")
+
 covid19$Fecha <- excel_numeric_to_date(covid19$Fecha)
 
 ```
@@ -56,7 +58,9 @@ shp_comunas_ayp <-
         )
 
 covid19_ayp = covid19[covid19$Region == "Antofagasta", ]
+
 colnames(covid19_ayp)[3] <- "cod_comuna"
+
 data_ayp <- left_join(covid19_ayp, shp_comunas_ayp, by = "cod_comuna")
 # head(data_ayp, 100)
 data_ayp <- st_as_sf(data_ayp)
