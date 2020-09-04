@@ -62,6 +62,8 @@ covid19_ayp = covid19[covid19$Region == "Antofagasta", ]
 colnames(covid19_ayp)[3] <- "cod_comuna"
 
 data_ayp <- left_join(covid19_ayp, shp_comunas_ayp, by = "cod_comuna")
+
+
 # head(data_ayp, 100)
 data_ayp <- st_as_sf(data_ayp)
 ```

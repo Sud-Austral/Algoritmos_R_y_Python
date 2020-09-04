@@ -19,7 +19,7 @@ When you click the **Knit** button a document will be generated that includes bo
 
 ```{r cars}
 library(readxl)
-ageandheight <- read_excel("r0x.xlsx") #Upload the data
+ageandheight <- read_excel("R0_problema002.xlsx") #Upload the data
 lmHeight = lm(Y~X, data = ageandheight) #Create the linear regression
 summary(lmHeight)
 
