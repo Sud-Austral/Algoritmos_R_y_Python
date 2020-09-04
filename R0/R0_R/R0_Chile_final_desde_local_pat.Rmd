@@ -1,7 +1,7 @@
 ---
-title: "R0 con solo los dos ultimos registros"
+title: "Ejemplo de ARIMA, la autocorrelacion del R0 en el tiempo"
 author: "DataIntelligence"
-date: "01-09-2020"
+date: "05-09-2020"
 output:
   html_document: default
   pdf_document: default
@@ -13,8 +13,11 @@ knitr::opts_chunk$set(echo = TRUE,
                       warning = FALSE
 )
 ```
-Version del R0:
-Se aplica el calculo de R0 solo a los dos ultimos valores.
+
+Aplicaremos el calculo del R0 no a los rangos de series de tiempo sino a dos momentos, a dos dias. Veremos que el resultado es casi identico al de si hicieramos el calculo sobre rangos de tiempo.
+Utilizaremos 
+
+
 ```{r uno}
 library(knitr)
 library(kableExtra)
@@ -38,10 +41,6 @@ library(lubridate)
 theme_set(theme_bw()) 
 ```
 
-# Cálculo del R0 para Chile
-
-
-
 
 ```{r cinco}
 
@@ -49,7 +48,7 @@ theme_set(theme_bw())
  covid19 <-
   read_xlsx("C:/Users/usuario/Desktop/GitHub-trabajo/Algoritmos_R_y_Python/R0/R0_R/salida.xlsx")
 
-
+head(covid19)
 # covid19 <-  covid19 %>% filter(Comuna == 'Taltal')
 
 covid19 <- subset(covid19, Comuna != "Chillán")

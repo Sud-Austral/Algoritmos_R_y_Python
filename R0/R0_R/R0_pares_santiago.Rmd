@@ -14,7 +14,10 @@ library(ggplot2)
 
 ```{r cars}
 library(readxl)
-ageandheight <- read_excel("r0manual.xlsx") #Upload the data
+# ageandheight <- read_excel("r0manual.xlsx") #Upload the data
+# ageandheight <- read_excel("copiapo.xlsx") #Upload the data
+ageandheight <- read_excel("lapintana.xlsx") #Upload the data
+# ageandheight <- read_excel("puntaarenas.xlsx") #Upload the data
 R0_v <- c()
 comuna_v <- c()
 codigo_comuna_v <- c()
@@ -35,16 +38,16 @@ m <- seq(2, 42)
     
     for (i in m)
     {        
-         xx <- ageandheight$X[1:i]
-        #xx <- ageandheight$X[i-1:i]
+         #xx <- ageandheight$X[1:i]
+        xx <- ageandheight$X[i-1:i]
 
-         yy <- ageandheight$Y[1:i]
-        #yy <- ageandheight$Y[i-1:i]
+         #yy <- ageandheight$Y[1:i]
+        yy <- ageandheight$Y[i-1:i]
         
         if(!is.null(yy)){
         estimacion.R0 = -summary(lm(yy ~ xx))$coefficients[2]
         R0_v[i] <- estimacion.R0
-        comuna_v <- "Santiago"
+        comuna_v <- "comuna"
         # codigo_comuna_v <- codigo_comuna
         # fecha_v <- fecha
         # dia_v <- dia
@@ -71,14 +74,17 @@ m <- seq(2, 42)
     y <- c()
 
 ```
+Y y X de la regresion lineal
 
 ```{r}
 
-income.graph <- ggplot(ageandheight, aes(x=X, y=Y))+
-                     geom_point()
-income.graph
-
-
+income.graph <- ggplot(ageandheight, aes(x=X, y=Y))+geom_point()
 income.graph <- income.graph + geom_smooth(method="lm", col="red", size = 0.5)
 income.graph
+
 ```
+
+
+
+
+
