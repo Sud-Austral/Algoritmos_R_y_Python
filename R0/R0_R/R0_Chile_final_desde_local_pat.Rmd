@@ -1,5 +1,5 @@
 ---
-title: "Ejemplo de ARIMA, la autocorrelacion del R0 en el tiempo"
+title: "R0 en el tiempo en rangos y con dos valores."
 author: "DataIntelligence"
 date: "05-09-2020"
 output:
@@ -14,8 +14,8 @@ knitr::opts_chunk$set(echo = TRUE,
 )
 ```
 
-Aplicaremos el calculo del R0 no a los rangos de series de tiempo sino a dos momentos, a dos dias. Veremos que el resultado es casi identico al de si hicieramos el calculo sobre rangos de tiempo.
-Utilizaremos 
+Aplicaremos el calculo del R0 no a los rangos de series de tiempo sino a dos momentos, a dos dias. Demostraremos que el resultado es idéntico al de si hiciéramos el cálculo sobre rangos de tiempo.
+
 
 
 ```{r uno}
@@ -37,6 +37,7 @@ library(rmarkdown)
 library(ggplot2)
 library(gganimate)
 library(lubridate)
+library(plotly)
 
 theme_set(theme_bw()) 
 ```
@@ -49,14 +50,30 @@ theme_set(theme_bw())
   read_xlsx("C:/Users/usuario/Desktop/GitHub-trabajo/Algoritmos_R_y_Python/R0/R0_R/salida.xlsx")
 
 head(covid19)
-# covid19 <-  covid19 %>% filter(Comuna == 'Taltal')
+covid19 <-  covid19 %>% filter(Comuna == 'Punta Arenas') 
 
 covid19 <- subset(covid19, Comuna != "Chillán")
+
+covid19 <- subset(covid19, Fecha> "2020-05-22")
+
+
+#covid19 <- subset(covid19, Fecha > "43934")
+# covid19 <- covid19[5,]
+
+
 # covid19
 
 R0_v <- c()
 comuna_v <- c()
 codigo_comuna_v <- c()
+a2 <- 0
+s2 <- 0
+s_v2 <- c()
+y_bueno2 <- c()
+
+R0_v2 <- c()
+comuna_v2 <- c()
+codigo_comuna_v2 <- c()
 a <- 0
 s <- 0
 s_v <- c()
@@ -147,11 +164,11 @@ print(tabla.comuna)
     
     for (i in m)
     {        
-        # xx <- tabla.comuna$Recuperados[1:i]
-        xx <- tabla.comuna$Recuperados[i-1:i]
+        xx <- tabla.comuna$Recuperados[1:i]
+        # xx <- tabla.comuna$Recuperados[i-1:i]
 
-        # yy <- y[1:i]
-        yy <- y[i-1:i]
+        yy <- y[1:i]
+        # yy <- y[i-1:i]
         
         if(!is.null(yy)){
         estimacion.R0 = -summary(lm(yy ~ xx))$coefficients[2]
@@ -163,14 +180,31 @@ print(tabla.comuna)
         }
     }
     
- #    eee <-
- #        data.frame(comuna_v, R0_v, codigo_comuna_v,  fecha_v, dia_v, comuna_en_cuestion$"Nuevos Confirmados", comuna_en_cuestion$"Nuevos Fallecidos", comuna_en_cuestion$"Nuevos Recuperados", 
- # comuna_en_cuestion$"Población"                  )
+    for (i in m)
+    {        
+        #xx <- tabla.comuna$Recuperados[1:i]
+        xxx <- tabla.comuna$Recuperados[i-1:i]
 
-        #eee <- data.frame(comuna_v, R0_v , fecha_v)
-            eee <- data.frame(comuna_v, R0_v )
-    print(eee)
+        #yy <- y[1:i]
+        yyy <- y[i-1:i]
+        
+        if(!is.null(yyy)){
+        estimacion.R02 = -summary(lm(yyy ~ xxx))$coefficients[2]
+        R0_v2[i] <- estimacion.R02
+        comuna_v2 <- comuna
+        codigo_comuna_v2 <- codigo_comuna
+        fecha_v2 <- fecha
+        # dia_v <- dia
+        }
+    }
+
     
+    
+    
+    
+    
+    eee <- data.frame(comuna_v, R0_v , fecha_v)
+
     write.table(
         eee,
         'R0.csv',
@@ -179,6 +213,18 @@ print(tabla.comuna)
         sep = ","
     )
     
+    
+    eee2 <- data.frame(comuna_v2, R0_v2 , fecha_v)
+
+    write.table(
+        eee2,
+        'R02.csv',
+        col.names = F,
+        append = T,
+        sep = ","
+    )
+    
+    
     R0_v <- c()
     comuna_v <- c()
     codigo_comuna_v <-  c()
@@ -186,6 +232,37 @@ print(tabla.comuna)
     s <- 0
     s_v <- c()
     y <- c()
+    
+    R0_v2 <- c()
+    comuna_v2 <- c()
+    codigo_comuna_v2 <-  c()
+    a2 <- 0
+    s2 <- 0
+    s_v2 <- c()
+    y2 <- c()
 }
+head(eee, 50)
+head(eee2, 50)
+```
+Y y X de la regresion lineal
+
+```{r}
+
+p <- ggplot(eee, aes(x=fecha_v, y=R0_v)) + geom_point(aes(y = R0_v), colour = "red")  
+
+o <- ggplot(eee2, aes(x=fecha_v, y=R0_v2)) + geom_point(aes(y = R0_v2), colour = "blue") 
+o
+
+#income.graph <- income.graph + geom_smooth(method="loess", col="red", size = 0.5)
+# income.graph
+
+
 
 ```
+
+
+
+
+
+
+
